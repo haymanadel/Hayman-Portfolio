@@ -1,0 +1,108 @@
+---
+import { profile } from "@/data";
+import Icon from "./Icon.astro";
+import ProfileCard from "./ProfileCard.astro";
+
+// "Full-Stack Web Developer & Software Developer" → two deliberate lines.
+const roleLines = profile.title.split(" & ").map((part, i) => (i === 0 ? part : `& ${part}`));
+---
+
+<section class="hero" id="top" aria-labelledby="hero-title">
+  <div class="grid-bg" aria-hidden="true"></div>
+  <div class="container layout">
+    <div class="copy">
+      <p class="status in" style="--i:0">
+        <span class="dot" aria-hidden="true"></span>{profile.availability}
+        <span class="sep" aria-hidden="true">·</span>
+        <Icon name="pin" class="pin" />{profile.location}
+      </p>
+
+      <h1 id="hero-title" class="in" style="--i:1">
+        <span class="name">{profile.brand}</span>
+        <span class="role">{roleLines.map((line) => <span>{line}</span>)}</span>
+      </h1>
+
+      <p class="tagline in" style="--i:2">{profile.tagline}</p>
+
+      <div class="ctas in" style="--i:3">
+        <a href="#work" class="btn btn-primary">View my work <Icon name="arrow-right" class="nudge" /></a>
+        <a href="#contact" class="btn btn-dark">Let’s work together</a>
+        {profile.cv && (
+          <a href={profile.cv.href} download={profile.cv.fileName} class="btn btn-ghost">
+            <Icon name="download" /> Download CV
+          </a>
+        )}
+      </div>
+
+      <div class="builds in" style="--i:4">
+        <p class="mono label">I build</p>
+        <ul role="list">
+          {profile.builds.map((b) => <li>{b}</li>)}
+        </ul>
+      </div>
+    </div>
+
+    <div class="visual in" style="--i:2">
+      {profile.photo ? (
+        <figure class="photo">
+          <img
+            src={profile.photo.src}
+            alt={profile.photo.alt}
+            width={profile.photo.width}
+            height={profile.photo.height}
+            fetchpriority="high"
+            decoding="async"
+          />
+        </figure>
+      ) : (
+        <ProfileCard />
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero { position: relative; isolation: isolate; overflow: hidden; padding-block: clamp(40px, 8vw, 96px) clamp(64px, 10vw, 120px); }
+  .grid-bg {
+    position: absolute; inset: 0; z-index: -1;
+    background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 80% 70% at 30% 20%, #000 30%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 30% 20%, #000 30%, transparent 75%);
+  }
+
+  .layout { display: grid; gap: clamp(40px, 6vw, 72px); align-items: center; }
+  @media (min-width: 960px) { .layout { grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.85fr); } }
+
+  .status { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); margin-bottom: clamp(20px, 3vw, 32px); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent) 30%, transparent); }
+  .sep { opacity: 0.6; }
+  .status :global(.pin) { width: 14px; height: 14px; }
+
+  h1 { display: grid; gap: clamp(14px, 2vw, 22px); }
+  .name {
+    font-size: clamp(3.6rem, 15vw, 9.5rem); font-weight: 800; letter-spacing: -0.03em; line-height: 0.82;
+    margin-inline-start: -0.04em;
+  }
+  .role { font-size: clamp(1.35rem, 3.3vw, 2.25rem); font-weight: 600; letter-spacing: -0.025em; line-height: 1.12; }
+  .role span { display: block; }
+
+  .tagline { margin-top: clamp(18px, 2.5vw, 26px); max-width: 34rem; font-size: clamp(1.05rem, 1.6vw, 1.2rem); color: var(--muted); }
+
+  .ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: clamp(26px, 3.5vw, 38px); }
+
+  .builds { margin-top: clamp(34px, 5vw, 56px); padding-top: 20px; border-top: 1px solid var(--line); display: grid; gap: 12px; }
+  .label { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .builds ul { display: flex; flex-wrap: wrap; gap: 8px 24px; }
+  .builds li { display: inline-flex; align-items: center; gap: 10px; font-weight: 600; font-size: 1rem; }
+  .builds li::before { content: ""; width: 5px; height: 5px; border-radius: 1px; background: var(--accent-text); flex: none; }
+
+  .visual { width: 100%; max-width: 440px; justify-self: center; }
+  @media (min-width: 960px) { .visual { justify-self: end; } }
+  .photo { margin: 0; border-radius: var(--radius); overflow: hidden; aspect-ratio: 4 / 5; background: var(--surface-2); box-shadow: var(--shadow); }
+  .photo img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* Entrance: short staggered rise, disabled by the global reduced-motion rule. */
+  .in { animation: rise 800ms var(--ease) both; animation-delay: calc(var(--i) * 90ms + 60ms); }
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+</style>

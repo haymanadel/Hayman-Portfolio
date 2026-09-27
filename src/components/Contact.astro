@@ -1,0 +1,74 @@
+---
+import { activeSocialLinks, primaryContact } from "@/data";
+import Icon from "./Icon.astro";
+
+// The main button goes to a direct channel (email / WhatsApp) when one is set,
+// otherwise to the first configured profile.
+const main = primaryContact ?? activeSocialLinks[0];
+const external = (href: string) => href.startsWith("http");
+---
+
+<section class="section contact" id="contact" aria-labelledby="contact-title">
+  <div class="container">
+    <div class="panel" data-reveal>
+      <p class="eyebrow"><span class="idx">08</span> Contact</p>
+      <h2 id="contact-title">Have a project in mind?<br /><span>Let’s build something useful.</span></h2>
+      <p class="lead">
+        Tell me what your business needs — a website, an online store or a system to run your operations — and I’ll help you plan it and
+        build it properly.
+      </p>
+
+      {main && (
+        <a class="btn btn-primary big" href={main.href} {...(external(main.href) && { target: "_blank", rel: "noopener noreferrer" })}>
+          {main.kind === "email" ? "Email me" : main.kind === "whatsapp" ? "Message me on WhatsApp" : `Find me on ${main.label}`}
+          <Icon name="arrow-up-right" class="nudge" />
+        </a>
+      )}
+
+      {activeSocialLinks.length > 0 && (
+        <ul role="list" class="channels" aria-label="Contact channels">
+          {activeSocialLinks.map((link) => (
+            <li>
+              <a href={link.href} {...(external(link.href) && { target: "_blank", rel: "noopener noreferrer me" })}>
+                <Icon name={link.kind} />
+                <span class="text"><span class="mono kind">{link.label}</span><span class="value">{link.display}</span></span>
+                <Icon name="arrow-up-right" class="go" />
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact { border-top: 0; }
+  .panel {
+    position: relative; overflow: hidden; padding: clamp(28px, 6vw, 72px); border-radius: calc(var(--radius) + 6px);
+    background: var(--invert-bg); color: var(--invert-text);
+    --muted-inv: color-mix(in oklab, var(--invert-text) 68%, transparent);
+    --line-inv: color-mix(in oklab, var(--invert-text) 16%, transparent);
+  }
+  .panel::after {
+    content: ""; position: absolute; width: 420px; height: 420px; inset-inline-end: -140px; top: -180px; border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in oklab, var(--accent) 35%, transparent), transparent 70%); pointer-events: none;
+  }
+  .eyebrow { color: var(--muted-inv); }
+  .idx { color: var(--invert-text); }
+  h2 { position: relative; margin-top: 20px; font-size: clamp(2.2rem, 6.5vw, 4.6rem); letter-spacing: -0.03em; max-width: 16ch; }
+  h2 span { color: var(--muted-inv); }
+  .lead { position: relative; margin-top: 20px; max-width: 38rem; color: var(--muted-inv); font-size: 1.08rem; }
+  .big { position: relative; margin-top: 32px; min-height: 56px; padding-inline: 28px; font-size: 1rem; }
+
+  .channels { position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); margin-top: clamp(32px, 5vw, 52px); border-top: 1px solid var(--line-inv); }
+  .channels a { display: flex; align-items: center; gap: 14px; padding: 18px 4px; border-bottom: 1px solid var(--line-inv); transition: color 180ms var(--ease); }
+  .channels a:hover .value { color: var(--accent); }
+  .channels :global(svg) { width: 20px; height: 20px; flex: none; }
+  .text { display: grid; min-width: 0; flex: 1; }
+  .kind { font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted-inv); }
+  .value { font-weight: 600; overflow-wrap: anywhere; transition: color 180ms var(--ease); }
+  .channels :global(.go) { width: 16px; height: 16px; opacity: 0.6; }
+
+  .panel :global(:focus-visible) { outline-color: var(--accent); }
+</style>

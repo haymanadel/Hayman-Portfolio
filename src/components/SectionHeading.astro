@@ -1,0 +1,26 @@
+---
+interface Props {
+  index: string;
+  label: string;
+  title: string;
+  id: string;
+  intro?: string;
+}
+const { index, label, title, id, intro } = Astro.props;
+---
+
+<div class="head" data-reveal>
+  <p class="eyebrow"><span class="idx">{index}</span> {label}</p>
+  <div>
+    <h2 id={id}>{title}</h2>
+    {intro && <p class="intro">{intro}</p>}
+  </div>
+</div>
+
+<style>
+  .head { display: grid; gap: 18px; margin-bottom: clamp(36px, 5vw, 64px); }
+  @media (min-width: 960px) { .head { grid-template-columns: minmax(0, 0.42fr) minmax(0, 1fr); gap: 32px; align-items: start; } .eyebrow { padding-top: 0.9rem; } }
+  .idx { color: var(--text); }
+  h2 { font-size: clamp(2rem, 5vw, 3.4rem); max-width: 20ch; }
+  .intro { margin-top: 16px; max-width: 40rem; color: var(--muted); font-size: 1.075rem; }
+</style>

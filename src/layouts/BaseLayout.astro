@@ -1,0 +1,85 @@
+---
+import "@/styles/global.css";
+import { site, profile, education, activeSocialLinks } from "@/data";
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Set on pages that must not be indexed (e.g. 404). */
+  noindex?: boolean;
+}
+
+const { title = site.title, description = site.description, noindex = false } = Astro.props;
+
+// Absolute URLs only exist once a domain is configured in src/data/site.ts.
+const origin = site.url.replace(/\/$/, "");
+const canonical = origin ? new URL(Astro.url.pathname, origin).href : null;
+const ogImage = origin ? `${origin}${site.ogImage.src}` : site.ogImage.src;
+
+const person = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: profile.fullName,
+  alternateName: profile.brand,
+  jobTitle: profile.title,
+  description: site.description,
+  ...(origin && { url: origin }),
+  address: { "@type": "PostalAddress", addressCountry: "EG" },
+  alumniOf: { "@type": "CollegeOrUniversity", name: education.institution },
+  knowsAbout: ["Web development", "Full-stack development", "E-commerce", "Management systems", "React", "TypeScript", "Node.js", "PostgreSQL"],
+  sameAs: activeSocialLinks.filter((l) => l.href.startsWith("http")).map((l) => l.href),
+};
+---
+
+<!doctype html>
+<html lang={site.lang} dir={site.dir}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={profile.fullName} />
+    {noindex ? <meta name="robots" content="noindex" /> : <meta name="robots" content="index, follow" />}
+    {canonical && <link rel="canonical" href={canonical} />}
+
+    <!-- Theme: applied before first paint so there is no flash of the wrong theme. -->
+    <script is:inline>
+      (() => {
+        let theme = null;
+        try { theme = localStorage.getItem("theme"); } catch {}
+        if (theme !== "light" && theme !== "dark") theme = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+    <meta name="theme-color" content={site.themeColor.light} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={site.themeColor.dark} media="(prefers-color-scheme: dark)" />
+    <meta name="color-scheme" content="light dark" />
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Social previews (Instagram, WhatsApp, LinkedIn, X, Facebook…) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={profile.brand} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content={String(site.ogImage.width)} />
+    <meta property="og:image:height" content={String(site.ogImage.height)} />
+    <meta property="og:image:alt" content={site.ogImage.alt} />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(person)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <slot />
+  </body>
+</html>

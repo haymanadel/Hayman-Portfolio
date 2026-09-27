@@ -1,0 +1,53 @@
+---
+import { profile, sections, activeSocialLinks } from "@/data";
+import Icon from "./Icon.astro";
+import Wordmark from "./Wordmark.astro";
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container inner">
+    <div class="brand">
+      <Wordmark size="lg" />
+      <p>{profile.title}</p>
+    </div>
+    <nav aria-label="Footer">
+      <ul role="list">
+        {sections.map((s) => <li><a href={`/#${s.id}`}>{s.label}</a></li>)}
+      </ul>
+    </nav>
+    {activeSocialLinks.length > 0 && (
+      <ul role="list" class="social">
+        {activeSocialLinks.map((l) => (
+          <li>
+            <a href={l.href} aria-label={l.label} {...(l.href.startsWith("http") && { target: "_blank", rel: "noopener noreferrer me" })}>
+              <Icon name={l.kind} />
+            </a>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+  <div class="container bottom">
+    <p>© {year} {profile.fullName}</p>
+    <a href="#top" class="mono top">Back to top ↑</a>
+  </div>
+</footer>
+
+<style>
+  .footer { padding-block: clamp(48px, 7vw, 72px) 28px; }
+  .inner { display: grid; gap: 28px; padding-bottom: 32px; border-bottom: 1px solid var(--line); }
+  @media (min-width: 960px) { .inner { grid-template-columns: 1fr auto auto; align-items: center; gap: 48px; } }
+  .brand p { margin-top: 10px; color: var(--muted); font-size: 0.95rem; }
+  nav ul { display: flex; flex-wrap: wrap; gap: 4px 20px; }
+  nav a { display: inline-flex; min-height: 44px; align-items: center; color: var(--muted); font-size: 0.95rem; }
+  nav a:hover { color: var(--text); }
+  .social { display: flex; gap: 8px; }
+  .social a { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 999px; border: 1px solid var(--line-strong); transition: border-color 180ms var(--ease), background-color 180ms var(--ease); }
+  .social a:hover { border-color: var(--text); background: var(--surface); }
+  .social :global(svg) { width: 18px; height: 18px; }
+  .bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding-top: 20px; color: var(--muted); font-size: 0.88rem; }
+  .top { display: inline-flex; align-items: center; min-height: 44px; font-size: 0.8rem; }
+  .top:hover { color: var(--text); }
+</style>

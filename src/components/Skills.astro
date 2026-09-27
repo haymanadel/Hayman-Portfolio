@@ -1,0 +1,49 @@
+---
+import { skillGroups, capabilities } from "@/data";
+import SectionHeading from "./SectionHeading.astro";
+---
+
+<section class="section" id="skills" aria-labelledby="skills-title">
+  <div class="container">
+    <SectionHeading
+      index="03"
+      label="Skills & technologies"
+      id="skills-title"
+      title="A modern, typed stack — end to end."
+      intro="Only tools I have used to ship the projects on this page."
+    />
+
+    <div class="groups">
+      {skillGroups.map((g, i) => (
+        <div class="group" data-reveal style={`--delay:${(i % 3) * 70}ms`}>
+          <h3 class="mono">{g.name}</h3>
+          <ul role="list">
+            {g.items.map((item) => <li>{item}</li>)}
+          </ul>
+        </div>
+      ))}
+    </div>
+
+    <div class="caps" data-reveal>
+      <p class="mono label">Capabilities</p>
+      <ul role="list">
+        {capabilities.map((c) => <li>{c}</li>)}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: clamp(28px, 4vw, 44px) clamp(24px, 4vw, 48px); }
+  .group { border-top: 1px solid var(--text); padding-top: 16px; }
+  h3 { font-size: 0.78rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+  .group ul { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+  .group li { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.015em; }
+
+  .caps { margin-top: clamp(40px, 6vw, 64px); padding: clamp(20px, 3vw, 28px); border-radius: var(--radius); background: var(--invert-bg); color: var(--invert-text); display: grid; gap: 14px; }
+  @media (min-width: 960px) { .caps { grid-template-columns: auto 1fr; align-items: center; gap: 28px; } }
+  .label { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.7; }
+  .caps ul { display: flex; flex-wrap: wrap; gap: 8px; }
+  .caps li { display: inline-flex; align-items: center; min-height: 34px; padding: 6px 14px; border-radius: 999px; border: 1px solid color-mix(in oklab, var(--invert-text) 25%, transparent); font-size: 0.9rem; font-weight: 550; }
+  .caps li:first-child { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+</style>

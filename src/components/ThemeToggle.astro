@@ -1,0 +1,26 @@
+---
+import Icon from "./Icon.astro";
+---
+
+<button class="theme-toggle" type="button" aria-label="Switch theme" data-theme-toggle>
+  <Icon name="sun" class="sun" />
+  <Icon name="moon" class="moon" />
+</button>
+
+<script>
+  import "@/scripts/theme";
+</script>
+
+<style>
+  .theme-toggle {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px; border-radius: 999px; color: var(--muted);
+    transition: color 160ms var(--ease), background-color 160ms var(--ease);
+  }
+  .theme-toggle:hover { color: var(--text); background: var(--surface-2); }
+  .theme-toggle :global(svg) { width: 19px; height: 19px; }
+  /* Show the icon of the theme you would switch TO. */
+  .theme-toggle :global(.sun) { display: none; }
+  :global(:root[data-theme="dark"]) .theme-toggle :global(.sun) { display: block; }
+  :global(:root[data-theme="dark"]) .theme-toggle :global(.moon) { display: none; }
+</style>

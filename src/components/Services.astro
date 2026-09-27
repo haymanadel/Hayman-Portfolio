@@ -1,0 +1,38 @@
+---
+import { services } from "@/data";
+import SectionHeading from "./SectionHeading.astro";
+---
+
+<section class="section" id="services" aria-labelledby="services-title">
+  <div class="container">
+    <SectionHeading
+      index="02"
+      label="What I do"
+      id="services-title"
+      title="From first page to production system."
+      intro="The kind of work I take on — each backed by projects already running in production."
+    />
+    <ol role="list" class="list">
+      {services.map((s, i) => (
+        <li data-reveal style={`--delay:${(i % 3) * 70}ms`}>
+          <span class="mono n">{String(i + 1).padStart(2, "0")}</span>
+          <h3>{s.title}</h3>
+          <p>{s.description}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); border-top: 1px solid var(--line); border-inline-start: 1px solid var(--line); }
+  li {
+    display: grid; align-content: start; gap: 10px; padding: clamp(22px, 3vw, 32px);
+    border-inline-end: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    transition: background-color 220ms var(--ease);
+  }
+  li:hover { background: var(--surface); }
+  .n { font-size: 0.75rem; color: var(--accent-text); }
+  h3 { font-size: 1.3rem; letter-spacing: -0.02em; margin-top: 18px; }
+  p { color: var(--muted); font-size: 0.98rem; }
+</style>

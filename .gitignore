@@ -1,0 +1,18 @@
+# dependencies & build output
+node_modules/
+dist/
+.astro/
+
+# environment — never commit real values
+.env
+.env.*
+!.env.example
+
+# logs & OS/editor noise
+*.log
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/*
+!.vscode/extensions.json
+.idea/

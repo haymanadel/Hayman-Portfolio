@@ -1,0 +1,96 @@
+---
+import { profile, sections } from "@/data";
+import Icon from "./Icon.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+import Wordmark from "./Wordmark.astro";
+---
+
+<header class="site-header" data-header>
+  <div class="container bar">
+    <a href="/#top" class="brand" aria-label={`${profile.brand} — home`}><Wordmark /></a>
+
+    <nav class="nav-desktop" aria-label="Primary">
+      <ul role="list">
+        {sections.map((s) => <li><a href={`/#${s.id}`} data-nav-link>{s.label}</a></li>)}
+      </ul>
+    </nav>
+
+    <div class="actions">
+      <ThemeToggle />
+      <a href="/#contact" class="btn btn-dark talk">Let’s talk</a>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-button>
+        <Icon name="menu" class="i-open" />
+        <Icon name="close" class="i-close" />
+        <span class="visually-hidden" data-menu-label>Open menu</span>
+      </button>
+    </div>
+  </div>
+
+  <nav id="mobile-menu" class="nav-mobile" aria-label="Mobile" hidden data-menu>
+    <ul role="list" class="container">
+      {sections.map((s, i) => (
+        <li>
+          <a href={`/#${s.id}`} data-menu-link>
+            <span class="mono idx">{String(i + 1).padStart(2, "0")}</span>{s.label}
+          </a>
+        </li>
+      ))}
+      <li class="menu-cta"><a href="/#contact" class="btn btn-primary" data-menu-link>Let’s work together <Icon name="arrow-right" /></a></li>
+    </ul>
+  </nav>
+</header>
+
+<script>
+  import "@/scripts/header";
+</script>
+
+<style>
+  .site-header {
+    position: sticky; top: 0; z-index: 50;
+    background: color-mix(in oklab, var(--bg) 88%, transparent);
+    backdrop-filter: saturate(1.4) blur(10px);
+    -webkit-backdrop-filter: saturate(1.4) blur(10px);
+    border-bottom: 1px solid transparent;
+    transition: border-color 200ms var(--ease);
+  }
+  .site-header.scrolled, .site-header.open { border-bottom-color: var(--line); }
+  .site-header.open { background: var(--bg); }
+
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: var(--header-h); }
+  .brand { display: inline-flex; align-items: center; min-height: 44px; }
+
+  .nav-desktop ul { display: flex; gap: 4px; }
+  .nav-desktop a {
+    display: inline-flex; align-items: center; min-height: 40px; padding: 0 12px; border-radius: 999px;
+    font-size: 0.925rem; color: var(--muted); transition: color 160ms var(--ease), background-color 160ms var(--ease);
+  }
+  .nav-desktop a:hover { color: var(--text); }
+  .nav-desktop a[aria-current="true"] { color: var(--text); background: var(--surface-2); }
+
+  .actions { display: flex; align-items: center; gap: 8px; }
+  .talk { min-height: 40px; padding: 8px 18px; font-size: 0.9rem; }
+
+  .menu-btn { display: none; width: 44px; height: 44px; align-items: center; justify-content: center; border-radius: 999px; border: 1px solid var(--line-strong); }
+  .menu-btn :global(svg) { width: 20px; height: 20px; }
+  .menu-btn :global(.i-close) { display: none; }
+  .menu-btn[aria-expanded="true"] :global(.i-open) { display: none; }
+  .menu-btn[aria-expanded="true"] :global(.i-close) { display: block; }
+
+  .nav-mobile { border-top: 1px solid var(--line); background: var(--bg); max-height: calc(100svh - var(--header-h)); overflow-y: auto; }
+  .nav-mobile ul { padding-block: 8px 24px; }
+  .nav-mobile li:not(.menu-cta) a {
+    display: flex; align-items: baseline; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--line);
+    font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em;
+  }
+  .nav-mobile .idx { font-size: 0.75rem; color: var(--muted); font-weight: 400; }
+  .menu-cta { padding-top: 20px; }
+  .menu-cta .btn { width: 100%; }
+
+  @media (max-width: 919px) {
+    .nav-desktop, .talk { display: none; }
+    .menu-btn { display: inline-flex; }
+  }
+  @media (min-width: 920px) {
+    .nav-mobile { display: none; }
+  }
+</style>

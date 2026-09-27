@@ -1,0 +1,21 @@
+---
+import { profile } from "@/data";
+
+interface Props {
+  size?: "md" | "lg";
+}
+const { size = "md" } = Astro.props;
+---
+
+<span class:list={["wordmark", size]}>
+  <span class="mark" aria-hidden="true"></span>{profile.brand}
+</span>
+
+<style>
+  .wordmark { display: inline-flex; align-items: center; gap: 10px; font-weight: 750; letter-spacing: 0.14em; font-size: 0.95rem; line-height: 1; }
+  .wordmark.lg { font-size: 1.15rem; gap: 12px; }
+  /* The brand mark: a solid accent square with an ink notch — reads at favicon size. */
+  .mark { position: relative; width: 14px; height: 14px; border-radius: 3px; background: var(--accent); flex: none; }
+  .mark::after { content: ""; position: absolute; inset-inline-end: 3px; bottom: 3px; width: 4px; height: 4px; border-radius: 1px; background: var(--on-accent); }
+  .lg .mark { width: 16px; height: 16px; }
+</style>

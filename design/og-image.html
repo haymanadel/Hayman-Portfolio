@@ -1,0 +1,43 @@
+<!doctype html>
+<!-- Source for public/images/branding/og-image.png (1200×630).
+     Edit the text below, open this file in a browser at exactly 1200×630 and
+     save a screenshot over the PNG — or re-run the render described in README. -->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  @import url("../node_modules/@fontsource-variable/inter-tight/index.css");
+  @import url("../node_modules/@fontsource-variable/jetbrains-mono/index.css");
+  * { margin: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 630px; }
+  body {
+    position: relative; overflow: hidden; padding: 72px 80px;
+    background: #0d0e0b; color: #ecebe4; font-family: "Inter Tight Variable", sans-serif;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .grid { position: absolute; inset: 0; background-image: linear-gradient(rgb(236 235 228 / .06) 1px, transparent 1px), linear-gradient(90deg, rgb(236 235 228 / .06) 1px, transparent 1px); background-size: 56px 56px; -webkit-mask-image: radial-gradient(ellipse 75% 80% at 20% 30%, #000 20%, transparent 75%); }
+  .glow { position: absolute; width: 620px; height: 620px; right: -200px; top: -260px; border-radius: 50%; background: radial-gradient(circle, rgb(198 238 58 / .28), transparent 70%); }
+  .top, main, .bottom { position: relative; }
+  .top { display: flex; align-items: center; justify-content: space-between; font-family: "JetBrains Mono Variable", monospace; font-size: 20px; color: #a2a397; }
+  .mark { display: inline-flex; align-items: center; gap: 14px; color: #ecebe4; font-family: "Inter Tight Variable"; font-weight: 750; letter-spacing: .14em; font-size: 22px; }
+  .sq { position: relative; width: 22px; height: 22px; border-radius: 5px; background: #c6ee3a; }
+  .sq::after { content: ""; position: absolute; right: 4px; bottom: 4px; width: 6px; height: 6px; border-radius: 1.5px; background: #0d0e0b; }
+  h1 { font-size: 168px; font-weight: 800; letter-spacing: -.03em; line-height: .82; }
+  h2 { margin-top: 26px; font-size: 44px; font-weight: 600; letter-spacing: -.025em; }
+  .bottom { display: flex; gap: 12px; }
+  .chip { padding: 10px 20px; border-radius: 999px; border: 1px solid rgb(236 235 228 / .2); font-size: 22px; font-weight: 550; }
+  .chip:first-child { background: #c6ee3a; color: #0d0e0b; border-color: #c6ee3a; }
+</style>
+</head>
+<body>
+  <div class="grid"></div><div class="glow"></div>
+  <div class="top"><span class="mark"><span class="sq"></span>HAYMAN</span><span>Full-stack · Egypt</span></div>
+  <main>
+    <h1>HAYMAN</h1>
+    <h2>Full-Stack Web Developer &amp; Software Developer</h2>
+  </main>
+  <div class="bottom">
+    <span class="chip">Websites</span><span class="chip">E-commerce</span><span class="chip">Management systems</span><span class="chip">Custom web apps</span>
+  </div>
+</body>
+</html>

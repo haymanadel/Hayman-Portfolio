@@ -1,0 +1,68 @@
+---
+// Stand-in for the hero portrait until a real photo is set in src/data/profile.ts.
+// It is a designed identity card, not a fake photo.
+import { profile } from "@/data";
+
+const initials = profile.fullName
+  .split(/\s+/)
+  .map((w) => w[0])
+  .join("")
+  .slice(0, 2)
+  .toUpperCase();
+
+const rows = [
+  { key: "focus", value: "Websites · E-commerce · Systems" },
+  { key: "stack", value: "React · Node.js · PostgreSQL" },
+  { key: "based", value: profile.location },
+];
+---
+
+<div class="card" role="img" aria-label={`${profile.fullName} — ${profile.title}`}>
+  <div class="top">
+    <span class="mono tag">profile.ts</span>
+    <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
+  </div>
+  <div class="monogram" aria-hidden="true">{initials}</div>
+  <div class="meta">
+    <p class="who">{profile.fullName}</p>
+    <p class="what">{profile.roles[0]}</p>
+  </div>
+  <dl class="rows mono">
+    {rows.map((r) => (
+      <div>
+        <dt>{r.key}</dt>
+        <dd>{r.value}</dd>
+      </div>
+    ))}
+  </dl>
+</div>
+
+<style>
+  .card {
+    position: relative; overflow: hidden; aspect-ratio: 4 / 5; display: flex; flex-direction: column;
+    padding: clamp(18px, 3vw, 26px); border-radius: var(--radius); border: 1px solid var(--line);
+    background:
+      radial-gradient(120% 70% at 100% 0%, color-mix(in oklab, var(--accent) 22%, transparent), transparent 60%),
+      var(--surface);
+    box-shadow: var(--shadow);
+  }
+  .top { display: flex; justify-content: space-between; align-items: center; }
+  .tag { font-size: 0.72rem; color: var(--muted); }
+  .lights { display: flex; gap: 6px; }
+  .lights i { width: 8px; height: 8px; border-radius: 50%; background: var(--line-strong); }
+  .lights i:first-child { background: var(--accent); }
+
+  .monogram {
+    flex: 1; display: grid; place-items: center;
+    font-size: clamp(6rem, 22vw, 9.5rem); font-weight: 800; letter-spacing: -0.06em; line-height: 1;
+    color: var(--text);
+  }
+  .meta { padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+  .who { font-weight: 700; font-size: 1.15rem; letter-spacing: -0.01em; }
+  .what { color: var(--muted); font-size: 0.92rem; }
+
+  .rows { display: grid; gap: 6px; padding-top: 14px; font-size: 0.74rem; }
+  .rows div { display: grid; grid-template-columns: 5.5ch 1fr; gap: 10px; }
+  dt { color: var(--accent-text); }
+  dd { margin: 0; color: var(--muted); overflow-wrap: anywhere; }
+</style>
