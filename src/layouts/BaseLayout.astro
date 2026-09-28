@@ -16,6 +16,8 @@ const origin = Astro.site ? Astro.site.origin : "";
 const canonical = origin && !noindex ? new URL(Astro.url.pathname, origin).href : null;
 const ogImage = origin ? `${origin}${site.ogImage.src}` : site.ogImage.src;
 
+const PROFILE_KINDS: string[] = ["github", "linkedin", "instagram", "facebook", "tiktok"];
+
 const person = {
   "@context": "https://schema.org",
   "@type": "Person",
@@ -29,7 +31,8 @@ const person = {
   address: { "@type": "PostalAddress", addressCountry: "EG" },
   alumniOf: { "@type": "CollegeOrUniversity", name: education.institution },
   knowsAbout: ["Web development", "Full-stack development", "E-commerce", "Management systems", "React", "TypeScript", "Node.js", "PostgreSQL"],
-  sameAs: activeSocialLinks.filter((l) => l.href.startsWith("http")).map((l) => l.href),
+  // Profile pages only (not chat/call/email links).
+  sameAs: activeSocialLinks.filter((l) => PROFILE_KINDS.includes(l.kind)).map((l) => l.href),
 };
 ---
 
