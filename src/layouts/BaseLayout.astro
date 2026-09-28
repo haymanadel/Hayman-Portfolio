@@ -1,6 +1,6 @@
 ---
 import "@/styles/global.css";
-import { site, profile, education, activeSocialLinks } from "@/data";
+import { site, profile, education, activeSocialLinks, primaryContact } from "@/data";
 
 interface Props {
   title?: string;
@@ -24,6 +24,8 @@ const person = {
   jobTitle: profile.title,
   description: site.description,
   ...(origin && { url: origin }),
+  ...(origin && profile.photo && { image: `${origin}${profile.photo.src}` }),
+  ...(primaryContact?.kind === "email" && { email: primaryContact.href.replace(/^mailto:/, "") }),
   address: { "@type": "PostalAddress", addressCountry: "EG" },
   alumniOf: { "@type": "CollegeOrUniversity", name: education.institution },
   knowsAbout: ["Web development", "Full-stack development", "E-commerce", "Management systems", "React", "TypeScript", "Node.js", "PostgreSQL"],

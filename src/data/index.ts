@@ -7,7 +7,7 @@ export { projects } from "./projects";
 export { journey, journeyNote } from "./journey";
 export { education } from "./education";
 export { processSteps } from "./process";
-export { socialLinks, activeSocialLinks, primaryContact } from "./social";
+export { socialLinks, activeSocialLinks, primaryContact, whatsappContact } from "./social";
 
 /** In-page sections, in order — drives the header navigation. */
 export const sections = [

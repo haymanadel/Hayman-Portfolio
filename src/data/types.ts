@@ -7,6 +7,8 @@ export interface Image {
   alt: string;
   width: number;
   height: number;
+  /** Optional responsive sources, e.g. "/a-400.webp 400w, /a-608.webp 608w". */
+  srcset?: string;
 }
 
 export interface SiteSettings {
@@ -97,7 +99,7 @@ export interface ProcessStep {
   description: string;
 }
 
-export type SocialKind = "email" | "github" | "linkedin" | "instagram" | "tiktok" | "whatsapp";
+export type SocialKind = "email" | "whatsapp" | "phone" | "github" | "linkedin" | "instagram" | "facebook" | "tiktok";
 
 export interface SocialLink {
   kind: SocialKind;

@@ -11,10 +11,15 @@ export const profile: Profile = {
   location: "Egypt",
   availability: "Open to new projects",
 
-  // ▶ Add your photo: put a portrait (≈1200×1500, WebP or JPG) in
-  //   public/images/profile/ and replace null with, for example:
-  //   { src: "/images/profile/hayman.webp", alt: "Hayman Adel", width: 1200, height: 1500 }
-  photo: null,
+  // Background-removed portrait (transparent WebP). Source files: design/photo/.
+  // To replace: export a transparent 4:5 crop to public/images/profile/ and update below.
+  photo: {
+    src: "/images/profile/hayman-adel-608.webp",
+    srcset: "/images/profile/hayman-adel-400.webp 400w, /images/profile/hayman-adel-608.webp 608w",
+    alt: "Portrait of Hayman Adel smiling, wearing a black academic gown with a light-blue stole",
+    width: 608,
+    height: 760,
+  },
 
   // ▶ Add your CV: put the PDF in public/cv/ and replace null with, for example:
   //   { href: "/cv/Hayman-Adel-CV.pdf", fileName: "Hayman-Adel-CV.pdf" }

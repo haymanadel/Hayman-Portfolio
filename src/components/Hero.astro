@@ -2,6 +2,7 @@
 import { profile } from "@/data";
 import Icon from "./Icon.astro";
 import ProfileCard from "./ProfileCard.astro";
+import PortraitCard from "./PortraitCard.astro";
 
 // "Full-Stack Web Developer & Software Developer" → two deliberate lines.
 const roleLines = profile.title.split(" & ").map((part, i) => (i === 0 ? part : `& ${part}`));
@@ -43,20 +44,7 @@ const roleLines = profile.title.split(" & ").map((part, i) => (i === 0 ? part : 
     </div>
 
     <div class="visual in" style="--i:2">
-      {profile.photo ? (
-        <figure class="photo">
-          <img
-            src={profile.photo.src}
-            alt={profile.photo.alt}
-            width={profile.photo.width}
-            height={profile.photo.height}
-            fetchpriority="high"
-            decoding="async"
-          />
-        </figure>
-      ) : (
-        <ProfileCard />
-      )}
+      {profile.photo ? <PortraitCard /> : <ProfileCard />}
     </div>
   </div>
 </section>
@@ -99,8 +87,6 @@ const roleLines = profile.title.split(" & ").map((part, i) => (i === 0 ? part : 
 
   .visual { width: 100%; max-width: 440px; justify-self: center; }
   @media (min-width: 960px) { .visual { justify-self: end; } }
-  .photo { margin: 0; border-radius: var(--radius); overflow: hidden; aspect-ratio: 4 / 5; background: var(--surface-2); box-shadow: var(--shadow); }
-  .photo img { width: 100%; height: 100%; object-fit: cover; }
 
   /* Entrance: short staggered rise, disabled by the global reduced-motion rule. */
   .in { animation: rise 800ms var(--ease) both; animation-delay: calc(var(--i) * 90ms + 60ms); }

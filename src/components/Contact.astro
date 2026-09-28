@@ -1,11 +1,13 @@
 ---
-import { activeSocialLinks, primaryContact } from "@/data";
+import { activeSocialLinks, primaryContact, whatsappContact } from "@/data";
 import Icon from "./Icon.astro";
 import { linkAttrs } from "@/lib/links";
 
 // The main button goes to a direct channel (email / WhatsApp) when one is set,
 // otherwise to the first configured profile.
 const main = primaryContact ?? activeSocialLinks[0];
+// WhatsApp as a second quick action when email is the main one.
+const secondary = main?.kind !== "whatsapp" ? whatsappContact : undefined;
 ---
 
 <section class="section contact" id="contact" aria-labelledby="contact-title">
@@ -19,10 +21,17 @@ const main = primaryContact ?? activeSocialLinks[0];
       </p>
 
       {main && (
-        <a class="btn btn-primary big" href={main.href} {...linkAttrs(main.href)}>
-          {main.kind === "email" ? "Email me" : main.kind === "whatsapp" ? "Message me on WhatsApp" : `Find me on ${main.label}`}
-          <Icon name="arrow-up-right" class="nudge" />
-        </a>
+        <div class="actions">
+          <a class="btn btn-primary big" href={main.href} {...linkAttrs(main.href)}>
+            {main.kind === "email" ? "Email me" : main.kind === "whatsapp" ? "Message me on WhatsApp" : `Find me on ${main.label}`}
+            <Icon name="arrow-up-right" class="nudge" />
+          </a>
+          {secondary && (
+            <a class="btn big alt" href={secondary.href} {...linkAttrs(secondary.href)}>
+              <Icon name="whatsapp" /> WhatsApp
+            </a>
+          )}
+        </div>
       )}
 
       {activeSocialLinks.length > 0 && (
@@ -59,7 +68,10 @@ const main = primaryContact ?? activeSocialLinks[0];
   h2 { position: relative; margin-top: 20px; font-size: clamp(2.2rem, 6.5vw, 4.6rem); letter-spacing: -0.03em; max-width: 16ch; }
   h2 span { color: var(--muted-inv); }
   .lead { position: relative; margin-top: 20px; max-width: 38rem; color: var(--muted-inv); font-size: 1.08rem; }
-  .big { position: relative; margin-top: 32px; min-height: 56px; padding-inline: 28px; font-size: 1rem; }
+  .actions { position: relative; display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+  .big { min-height: 56px; padding-inline: 28px; font-size: 1rem; }
+  .alt { border: 1px solid color-mix(in oklab, var(--invert-text) 30%, transparent); color: var(--invert-text); }
+  .alt:hover { border-color: var(--invert-text); background: color-mix(in oklab, var(--invert-text) 8%, transparent); }
 
   .channels { position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); margin-top: clamp(32px, 5vw, 52px); border-top: 1px solid var(--line-inv); }
   .channels a { display: flex; align-items: center; gap: 14px; padding: 18px 4px; border-bottom: 1px solid var(--line-inv); transition: color 180ms var(--ease); }
