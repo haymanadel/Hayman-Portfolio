@@ -6,7 +6,7 @@
   "description": "Personal portfolio of Hayman Adel — Full-Stack Web Developer & Software Developer.",
   "packageManager": "pnpm@11.17.0",
   "engines": {
-    "node": ">=22.0.0"
+    "node": "22.x"
   },
   "scripts": {
     "dev": "astro dev",
