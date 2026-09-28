@@ -11,9 +11,9 @@ interface Props {
 
 const { title = site.title, description = site.description, noindex = false } = Astro.props;
 
-// Absolute URLs only exist once a domain is configured in src/data/site.ts.
-const origin = site.url.replace(/\/$/, "");
-const canonical = origin ? new URL(Astro.url.pathname, origin).href : null;
+// Absolute URLs only exist when a real origin is resolved (see astro.config.mjs).
+const origin = Astro.site ? Astro.site.origin : "";
+const canonical = origin && !noindex ? new URL(Astro.url.pathname, origin).href : null;
 const ogImage = origin ? `${origin}${site.ogImage.src}` : site.ogImage.src;
 
 const person = {

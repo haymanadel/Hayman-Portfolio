@@ -7,7 +7,7 @@ import type { SocialLink } from "./types";
 //   instagram → href: "https://www.instagram.com/…",   display: "@…"
 //   whatsapp  → href: "https://wa.me/20XXXXXXXXXX",    display: "+20 …"
 export const socialLinks: SocialLink[] = [
-  { kind: "email", label: "Email", href: "", display: "" },
+  { kind: "email", label: "Email", href: "mailto:haymanadel@gmail.com", display: "haymanadel@gmail.com" },
   { kind: "github", label: "GitHub", href: "https://github.com/haymanadel", display: "github.com/haymanadel" },
   { kind: "linkedin", label: "LinkedIn", href: "", display: "" },
   { kind: "instagram", label: "Instagram", href: "", display: "" },

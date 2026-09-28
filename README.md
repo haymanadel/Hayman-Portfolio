@@ -31,17 +31,54 @@ pnpm build      # type-check (astro check) + production build into dist/
 pnpm preview    # serve the production build locally
 ```
 
-## Deploy
+## Deployment (Vercel)
 
-`dist/` is plain static files — any static host works (Vercel, Netlify,
-Cloudflare Pages, Render Static Site, GitHub Pages).
+The site is deployed as a **static** Astro build on Vercel:
+browser → Vercel CDN → files in `dist/`. There is no server, API or database.
 
-- Build command: `pnpm build`
-- Output directory: `dist`
-- Node version: 22
+| Setting | Value |
+|---|---|
+| Framework preset | Astro (auto-detected) |
+| Install command | `pnpm install` |
+| Build command | `pnpm build` |
+| Output directory | `dist` |
+| Node.js | 22.x |
+| Environment variables | none |
 
-After you pick a domain, set it once in `src/data/site.ts` (`url`). That turns on
-canonical URLs, `og:url`, the sitemap entry and the `Sitemap:` line in robots.txt.
+The Vercel project is connected to this GitHub repository: every push to `main`
+deploys to production automatically, and pull requests get preview deployments.
+No `vercel.json` is needed.
+
+`dist/` is plain static files, so any other static host (Netlify, Cloudflare
+Pages, GitHub Pages) works with the same build command and output directory.
+
+### Site URL (canonical, sitemap, Open Graph)
+
+Absolute URLs — `<link rel="canonical">`, `og:url`, the absolute `og:image`,
+`sitemap.xml` and the `Sitemap:` line in `robots.txt` — come from one resolved
+origin (see `astro.config.mjs`):
+
+1. `url` in **`src/data/site.ts`**, when set;
+2. otherwise, on Vercel, the project's production domain
+   (`VERCEL_PROJECT_PRODUCTION_URL`, provided by Vercel at build time);
+3. otherwise nothing — local builds never emit localhost URLs.
+
+## Custom Domain
+
+1. In Vercel: **Project → Settings → Domains → Add**, enter your domain
+   (add both `yourdomain.com` and `www.yourdomain.com`, and choose which one
+   redirects to the other).
+2. At your domain registrar, add exactly the DNS records Vercel shows for your
+   domain, then wait until Vercel marks the domain as valid.
+3. In **`src/data/site.ts`**, set `url` to the primary domain, e.g.
+   `url: "https://yourdomain.com"` (use the `www` form if `www` is primary).
+4. Commit and push to `main` — Vercel redeploys automatically.
+5. Open the domain and confirm HTTPS works (Vercel issues the certificate).
+6. View the page source: `<link rel="canonical">` must show your domain.
+7. Open `/sitemap.xml` and `/robots.txt`: both must reference your domain.
+8. Check that `og:url` and `og:image` in the page source use your domain, then
+   re-test the link preview (e.g. the Facebook Sharing Debugger or LinkedIn Post
+   Inspector) so social platforms refresh their cached preview.
 
 ## Where everything lives
 

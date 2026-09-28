@@ -2,6 +2,7 @@
 import { profile, sections, activeSocialLinks } from "@/data";
 import Icon from "./Icon.astro";
 import Wordmark from "./Wordmark.astro";
+import { linkAttrs } from "@/lib/links";
 
 const year = new Date().getFullYear();
 ---
@@ -21,7 +22,7 @@ const year = new Date().getFullYear();
       <ul role="list" class="social">
         {activeSocialLinks.map((l) => (
           <li>
-            <a href={l.href} aria-label={l.label} {...(l.href.startsWith("http") && { target: "_blank", rel: "noopener noreferrer me" })}>
+            <a href={l.href} aria-label={l.label} {...linkAttrs(l.href, "noopener noreferrer me")}>
               <Icon name={l.kind} />
             </a>
           </li>
