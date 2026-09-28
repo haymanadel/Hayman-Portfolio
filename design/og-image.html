@@ -1,43 +1,59 @@
 <!doctype html>
-<!-- Source for public/images/branding/og-image.png (1200×630).
-     Edit the text below, open this file in a browser at exactly 1200×630 and
-     save a screenshot over the PNG — or re-run the render described in README. -->
+<!-- Source for public/images/branding/og-image.png (EN) and og-image-ar.png (AR), 1200×630.
+     Open with ?lang=ar for the Arabic version. Render at exactly 1200×630 and save
+     a screenshot over the PNG (see README → SEO / social preview). -->
 <html lang="en">
 <head>
 <meta charset="utf-8" />
 <style>
   @import url("../node_modules/@fontsource-variable/inter-tight/index.css");
   @import url("../node_modules/@fontsource-variable/jetbrains-mono/index.css");
+  @import url("../node_modules/@fontsource-variable/readex-pro/index.css");
   * { margin: 0; box-sizing: border-box; }
   html, body { width: 1200px; height: 630px; }
   body {
-    position: relative; overflow: hidden; padding: 72px 80px;
-    background: #0d0e0b; color: #ecebe4; font-family: "Inter Tight Variable", sans-serif;
-    display: flex; flex-direction: column; justify-content: space-between;
+    position: relative; overflow: hidden; background: #0d0e0b; color: #ecebe4;
+    font-family: "Inter Tight Variable", "Readex Pro Variable", sans-serif;
+    display: grid; grid-template-columns: 1fr 440px;
   }
-  .grid { position: absolute; inset: 0; background-image: linear-gradient(rgb(236 235 228 / .06) 1px, transparent 1px), linear-gradient(90deg, rgb(236 235 228 / .06) 1px, transparent 1px); background-size: 56px 56px; -webkit-mask-image: radial-gradient(ellipse 75% 80% at 20% 30%, #000 20%, transparent 75%); }
-  .glow { position: absolute; width: 620px; height: 620px; right: -200px; top: -260px; border-radius: 50%; background: radial-gradient(circle, rgb(198 238 58 / .28), transparent 70%); }
-  .top, main, .bottom { position: relative; }
-  .top { display: flex; align-items: center; justify-content: space-between; font-family: "JetBrains Mono Variable", monospace; font-size: 20px; color: #a2a397; }
-  .mark { display: inline-flex; align-items: center; gap: 14px; color: #ecebe4; font-family: "Inter Tight Variable"; font-weight: 750; letter-spacing: .14em; font-size: 22px; }
+  .grid { position: absolute; inset: 0; background-image: linear-gradient(rgb(236 235 228 / .05) 1px, transparent 1px), linear-gradient(90deg, rgb(236 235 228 / .05) 1px, transparent 1px); background-size: 56px 56px; -webkit-mask-image: radial-gradient(ellipse 80% 90% at 30% 40%, #000 20%, transparent 80%); }
+  .copy { position: relative; padding: 70px 0 64px 80px; display: flex; flex-direction: column; justify-content: space-between; }
+  .mark { align-self: flex-start; display: inline-flex; align-items: center; gap: 14px; font-weight: 750; letter-spacing: .14em; font-size: 22px; }
   .sq { position: relative; width: 22px; height: 22px; border-radius: 5px; background: #c6ee3a; }
   .sq::after { content: ""; position: absolute; right: 4px; bottom: 4px; width: 6px; height: 6px; border-radius: 1.5px; background: #0d0e0b; }
-  h1 { font-size: 168px; font-weight: 800; letter-spacing: -.03em; line-height: .82; }
-  h2 { margin-top: 26px; font-size: 44px; font-weight: 600; letter-spacing: -.025em; }
-  .bottom { display: flex; gap: 12px; }
-  .chip { padding: 10px 20px; border-radius: 999px; border: 1px solid rgb(236 235 228 / .2); font-size: 22px; font-weight: 550; }
-  .chip:first-child { background: #c6ee3a; color: #0d0e0b; border-color: #c6ee3a; }
+  h1 { font-size: 104px; font-weight: 800; letter-spacing: -.045em; line-height: .9; }
+  .role { margin-top: 26px; font-family: "JetBrains Mono Variable", monospace; font-size: 19px; letter-spacing: .08em; text-transform: uppercase; color: #c6ee3a; }
+  .title { margin-top: 10px; font-size: 42px; font-weight: 650; letter-spacing: -.025em; }
+  .foot { font-size: 21px; color: #a2a397; }
+  .photo { position: relative; }
+  .glow { position: absolute; inset: 0; background: radial-gradient(46% 40% at 50% 34%, rgb(198 238 58 / .32), transparent 72%); }
+  .photo img { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); height: 590px; filter: drop-shadow(0 20px 30px rgb(0 0 0 / .45)); }
+  /* Arabic variant */
+  body.ar { direction: rtl; grid-template-columns: 1fr 440px; }
+  body.ar .copy { padding: 70px 80px 64px 0; }
+  body.ar .role { font-family: "Readex Pro Variable", sans-serif; letter-spacing: 0; text-transform: none; font-size: 26px; font-weight: 600; }
+  body.ar .title { font-size: 46px; letter-spacing: 0; line-height: 1.3; }
+  body.ar h1 { direction: ltr; text-align: right; }
 </style>
 </head>
 <body>
-  <div class="grid"></div><div class="glow"></div>
-  <div class="top"><span class="mark"><span class="sq"></span>HAYMAN</span><span>Full-stack · Egypt</span></div>
-  <main>
-    <h1>HAYMAN</h1>
-    <h2>Full-Stack Web Developer &amp; Software Developer</h2>
-  </main>
-  <div class="bottom">
-    <span class="chip">Websites</span><span class="chip">E-commerce</span><span class="chip">Management systems</span><span class="chip">Custom web apps</span>
+  <div class="grid"></div>
+  <div class="copy">
+    <span class="mark" dir="ltr"><span class="sq"></span>HAYMAN</span>
+    <div>
+      <h1 lang="en">Hayman<br />Adel</h1>
+      <p class="role" data-en="Mechatronics Engineering Graduate" data-ar="خريج هندسة الميكاترونكس">Mechatronics Engineering Graduate</p>
+      <p class="title" data-en="Web &amp; Application Developer" data-ar="مطوّر مواقع وتطبيقات">Web &amp; Application Developer</p>
+    </div>
+    <p class="foot" data-en="Websites · E-commerce · Digital applications" data-ar="مواقع · متاجر إلكترونية · تطبيقات رقمية">Websites · E-commerce · Digital applications</p>
   </div>
+  <div class="photo"><div class="glow"></div><img src="../public/images/profile/hayman-adel-608.webp" alt="" /></div>
+  <script>
+    if (new URLSearchParams(location.search).get("lang") === "ar") {
+      document.documentElement.lang = "ar";
+      document.body.classList.add("ar");
+      document.querySelectorAll("[data-ar]").forEach((el) => (el.textContent = el.dataset.ar));
+    }
+  </script>
 </body>
 </html>

@@ -1,13 +1,10 @@
-import type { SocialLink } from "./types";
+import type { SocialKind, SocialLink } from "./types";
 
 // ▶ Fill in `href` and `display` to show a channel; empty entries stay hidden.
-//   Examples:
-//   linkedin  → href: "https://www.linkedin.com/in/…",  display: "linkedin.com/in/…"
-//   tiktok    → href: "https://www.tiktok.com/@…",      display: "@…"
-// Order here is the order shown on the site.
+//   linkedin → href: "https://www.linkedin.com/in/…", display: "linkedin.com/in/…"
 export const socialLinks: SocialLink[] = [
   { kind: "email", label: "Email", href: "mailto:haymanadel@gmail.com", display: "haymanadel@gmail.com" },
-  { kind: "whatsapp", label: "WhatsApp", href: "https://wa.me/201090403737", display: "Message on WhatsApp" },
+  { kind: "whatsapp", label: "WhatsApp", href: "https://wa.me/201090403737", display: "+20 109 040 3737" },
   { kind: "phone", label: "Phone", href: "tel:+201090403737", display: "+20 109 040 3737" },
   { kind: "github", label: "GitHub", href: "https://github.com/haymanadel", display: "github.com/haymanadel" },
   { kind: "linkedin", label: "LinkedIn", href: "", display: "" },
@@ -17,5 +14,11 @@ export const socialLinks: SocialLink[] = [
 ];
 
 export const activeSocialLinks = socialLinks.filter((link) => link.href.trim() !== "");
-export const primaryContact = activeSocialLinks.find((l) => l.kind === "email") ?? activeSocialLinks.find((l) => l.kind === "whatsapp");
-export const whatsappContact = activeSocialLinks.find((l) => l.kind === "whatsapp");
+const byKind = (kind: SocialKind) => activeSocialLinks.find((l) => l.kind === kind);
+
+export const emailLink = byKind("email");
+export const whatsappLink = byKind("whatsapp");
+
+/** Profiles shown as icons on the page (kept short on purpose). */
+const VISIBLE_PROFILES: SocialKind[] = ["github", "linkedin", "instagram"];
+export const profileLinks = activeSocialLinks.filter((l) => VISIBLE_PROFILES.includes(l.kind));

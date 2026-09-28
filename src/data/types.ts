@@ -1,10 +1,8 @@
-// Shapes for every piece of editable content. Components only read these
-// types, so content changes never require touching markup.
+// Language-neutral content. All wording lives in src/i18n/{en,ar}.ts.
 
 export interface Image {
   /** Path under /public, e.g. "/images/profile/hayman.webp". */
   src: string;
-  alt: string;
   width: number;
   height: number;
   /** Optional responsive sources, e.g. "/a-400.webp 400w, /a-608.webp 608w". */
@@ -12,91 +10,34 @@ export interface Image {
 }
 
 export interface SiteSettings {
-  /** Final public origin, e.g. "https://hayman.dev" — no trailing slash. Empty = not decided yet. */
+  /** Final public origin, e.g. "https://yourdomain.com" — no trailing slash. Empty = not decided yet. */
   url: string;
-  lang: "en";
-  dir: "ltr" | "rtl";
-  title: string;
-  description: string;
-  /** Social preview image under /public (1200×630). */
-  ogImage: Image;
+  /** Social preview images (1200×630) per language, under /public. */
+  ogImage: { en: string; ar: string; width: number; height: number };
   themeColor: { light: string; dark: string };
 }
 
 export interface Profile {
-  /** Short brand mark used in the header and hero. */
+  /** Short brand mark used in the header. */
   brand: string;
   fullName: string;
-  title: string;
-  roles: string[];
-  tagline: string;
-  /** What visitors can hire you to build — shown as a compact list in the hero. */
-  builds: string[];
-  location: string;
-  availability: string;
-  /** null until a real photo is added to /public/images/profile. */
-  photo: Image | null;
+  /** Background-removed portrait (transparent WebP). */
+  photo: Image;
   /** null until a CV file is added to /public/cv. The Download CV button only appears once set. */
   cv: { href: string; fileName: string } | null;
-  about: { lead: string; body: string[]; principles: string[] };
-}
-
-export interface Service {
-  title: string;
-  description: string;
-}
-
-export interface SkillGroup {
-  name: string;
-  items: string[];
-}
-
-export interface ProjectLink {
-  label: string;
-  href: string;
+  /** Technologies used in the projects shown on the site. */
+  toolkit: string[];
 }
 
 export interface Project {
-  slug: string;
+  slug: "olympic-gym" | "katakito-store";
   name: string;
-  category: string;
+  url: string;
+  /** Domain shown in the browser-frame preview. */
+  domain: string;
   year: string;
-  summary: string;
-  role: string;
-  /** Concrete things built — keep each item short and factual. */
-  highlights: string[];
-  technologies: string[];
-  links: ProjectLink[];
-  /** Real screenshot under /public/images/projects; null renders a styled preview instead. */
-  image: Image | null;
-  /** Label shown in the generated preview, e.g. the live domain. */
-  previewLabel: string;
-  /** Set when the write-up is still being prepared (no invented details). */
-  note?: string;
-  featured: boolean;
-}
-
-export interface JourneyStep {
-  period: string;
-  title: string;
-  description: string;
-  project?: string;
-}
-
-export interface Education {
-  institution: string;
-  shortName: string;
-  /** Exactly as written on your certificate; null until confirmed. */
-  degree: string | null;
-  specialization: string | null;
-  period: string | null;
-  summary: string;
-  certificate: Image | null;
-}
-
-export interface ProcessStep {
-  title: string;
-  description: string;
+  /** Real screenshots of the live site (desktop 16:10 and mobile). */
+  shots: { desktop: Image; mobile: Image };
 }
 
 export type SocialKind = "email" | "whatsapp" | "phone" | "github" | "linkedin" | "instagram" | "facebook" | "tiktok";

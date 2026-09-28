@@ -1,64 +1,86 @@
 ---
-// Hero portrait: the background-removed photo on the site's own card surface,
-// with a soft accent glow behind the subject (keeps the dark gown separated in
-// dark mode). Used when `profile.photo` is set; ProfileCard is the fallback.
+// Hero portrait: background-removed photo on the site's card surface, with a
+// soft accent glow (keeps the dark gown separated in dark mode), a clip-path
+// reveal on load and a subtle pointer tilt on desktop (scripts/hero.ts).
 import { profile } from "@/data";
+import { LANGS, type Lang } from "@/i18n";
+import Icon from "./Icon.astro";
 
-const photo = profile.photo!;
+interface Props {
+  lang: Lang;
+}
+const { copy } = LANGS[Astro.props.lang];
+const { photo } = profile;
 ---
 
-<figure class="portrait">
-  <div class="glow" aria-hidden="true"></div>
-  <img
-    src={photo.src}
-    srcset={photo.srcset}
-    sizes="(min-width: 960px) 440px, min(90vw, 440px)"
-    alt={photo.alt}
-    width={photo.width}
-    height={photo.height}
-    fetchpriority="high"
-    decoding="async"
-  />
-  <figcaption>
-    <span class="dot" aria-hidden="true"></span>
-    <span class="name">{profile.fullName}</span>
-    <span class="role">{profile.roles[0]}</span>
-  </figcaption>
-</figure>
+<div class="tilt" data-tilt>
+  <figure class="portrait">
+    <div class="glow" aria-hidden="true"></div>
+    <img
+      src={photo.src}
+      srcset={photo.srcset}
+      sizes="(min-width: 960px) 440px, min(92vw, 440px)"
+      alt={copy.hero.portraitAlt}
+      width={photo.width}
+      height={photo.height}
+      fetchpriority="high"
+      decoding="async"
+    />
+  </figure>
+  <p class="badge"><Icon name="cap" /><span class="ar-flat">{copy.hero.badge}</span></p>
+</div>
 
 <style>
+  .tilt {
+    position: relative; transform-style: preserve-3d;
+    transform: perspective(1100px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transition: transform 700ms var(--ease);
+  }
   .portrait {
     position: relative; isolation: isolate; overflow: hidden; margin: 0; aspect-ratio: 4 / 5;
-    border-radius: var(--radius); border: 1px solid var(--line);
+    border-radius: calc(var(--radius) + 6px); border: 1px solid var(--line);
     background:
       linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 40px 40px,
       linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / 40px 40px,
       var(--surface);
     box-shadow: var(--shadow);
   }
-  /* Accent light behind the head + a neutral lift so dark clothing never merges with the card. */
   .glow {
     position: absolute; inset: 0; z-index: -1;
     background:
-      radial-gradient(42% 34% at 50% 30%, color-mix(in oklab, var(--accent) 34%, transparent), transparent 72%),
-      radial-gradient(70% 55% at 50% 62%, color-mix(in oklab, var(--text) 7%, transparent), transparent 75%);
+      radial-gradient(44% 36% at calc(50% + var(--gx, 0%)) calc(30% + var(--gy, 0%)), color-mix(in oklab, var(--accent) 36%, transparent), transparent 72%),
+      radial-gradient(70% 55% at 50% 64%, color-mix(in oklab, var(--text) 7%, transparent), transparent 75%);
+    transition: background-position 600ms var(--ease);
   }
   img {
-    position: absolute; inset: 0; width: 100%; height: 100%;
-    object-fit: contain; object-position: 50% 100%;
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: 50% 100%;
     filter: drop-shadow(0 18px 28px rgb(0 0 0 / 0.22));
+    transform: translate(var(--ix, 0px), var(--iy, 0px));
+    transition: transform 700ms var(--ease);
   }
-  figcaption {
-    position: absolute; inset-inline-start: 14px; bottom: 14px; max-width: calc(100% - 28px);
-    display: inline-flex; align-items: center; flex-wrap: wrap; gap: 4px 10px;
-    padding: 8px 14px; border-radius: 999px;
-    background: color-mix(in oklab, var(--surface) 88%, transparent);
+  .badge {
+    position: absolute; inset-inline-start: -14px; bottom: 26px; z-index: 2;
+    display: inline-flex; align-items: center; gap: 8px; max-width: calc(100% - 20px);
+    padding: 9px 14px; border-radius: 999px; border: 1px solid var(--line);
+    background: color-mix(in oklab, var(--surface) 92%, transparent);
     backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-    border: 1px solid var(--line);
-    font-size: 0.85rem; line-height: 1.3;
+    box-shadow: var(--shadow); font-size: 0.82rem; font-weight: 600; transform: translateZ(40px);
   }
-  .dot { width: 8px; height: 8px; border-radius: 2px; background: var(--accent); flex: none; }
-  .name { font-weight: 700; }
-  .role { color: var(--muted); }
-  @media (max-width: 380px) { .role { display: none; } }
+  .badge :global(svg) { width: 17px; height: 17px; color: var(--accent-text); flex: none; }
+
+  /* Phones: square crop focused on the face, badge tucked inside the card. */
+  @media (max-width: 959px) {
+    .portrait { aspect-ratio: 1 / 1; }
+    img { object-fit: cover; object-position: 50% 0%; }
+    .badge { inset-inline-start: 12px; bottom: 12px; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .portrait { animation: uncover 1200ms var(--ease) 150ms both; }
+    img { animation: settle 1500ms var(--ease) 150ms both; }
+    .badge { animation: pop 800ms var(--ease) 900ms both; }
+    @keyframes uncover { from { clip-path: inset(100% 0 0 0 round 24px); } to { clip-path: inset(0 0 0 0 round 24px); } }
+    @keyframes settle { from { scale: 1.12; } to { scale: 1; } }
+    @keyframes pop { from { opacity: 0; transform: translateY(10px) translateZ(40px); } }
+  }
 </style>

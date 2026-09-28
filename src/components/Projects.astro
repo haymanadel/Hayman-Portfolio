@@ -1,34 +1,33 @@
 ---
 import { projects } from "@/data";
-import SectionHeading from "./SectionHeading.astro";
+import { LANGS, type Lang } from "@/i18n";
 import ProjectCard from "./ProjectCard.astro";
 
-const featured = projects.filter((p) => p.featured);
-const detailed = featured.filter((p) => !p.note);
-const upcoming = featured.filter((p) => p.note);
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const { copy } = LANGS[lang];
 ---
 
-<section class="section" id="work" aria-labelledby="work-title">
+<section class="section work" id="work" aria-labelledby="work-title">
   <div class="container">
-    <SectionHeading
-      index="04"
-      label="Selected work"
-      id="work-title"
-      title="Real projects, running in the real world."
-      intro="Business systems and products I have designed and built — from bilingual e-commerce to management platforms and IoT prototypes."
-    />
-    <div class="list">
-      {detailed.map((project, i) => <ProjectCard project={project} flip={i % 2 === 1} />)}
-    </div>
-    {upcoming.length > 0 && (
-      <div class="upcoming">
-        {upcoming.map((project) => <ProjectCard project={project} compact />)}
+    <div class="head" data-reveal>
+      <div>
+        <p class="eyebrow">{copy.work.eyebrow}</p>
+        <h2 id="work-title" class="section-title">{copy.work.title}</h2>
       </div>
-    )}
+      <p class="count" aria-hidden="true">0{projects.length}</p>
+    </div>
+    <div class="grid">
+      {projects.map((project, i) => <ProjectCard project={project} lang={lang} delay={i * 120} />)}
+    </div>
   </div>
 </section>
 
 <style>
-  .list { display: grid; gap: clamp(56px, 9vw, 112px); }
-  .upcoming { margin-top: clamp(48px, 7vw, 80px); display: grid; gap: 24px; }
+  .head { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: clamp(36px, 5vw, 60px); }
+  .count { font-family: var(--font-mono); font-size: clamp(2.5rem, 6vw, 4.5rem); line-height: 1; color: var(--line-strong); letter-spacing: -0.04em; }
+  .grid { display: grid; gap: clamp(20px, 3vw, 32px); }
+  @media (min-width: 900px) { .grid { grid-template-columns: 1fr 1fr; } }
 </style>

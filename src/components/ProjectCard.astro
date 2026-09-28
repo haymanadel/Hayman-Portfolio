@@ -1,107 +1,122 @@
 ---
+// One live project: real desktop + mobile screenshots, one-line description,
+// and a single link (the whole card is clickable through it).
 import type { Project } from "@/data/types";
+import { LANGS, type Lang } from "@/i18n";
 import Icon from "./Icon.astro";
-import ProjectPreview from "./ProjectPreview.astro";
 
 interface Props {
   project: Project;
-  /** Mirror the layout on wide screens (alternating rows). */
-  flip?: boolean;
-  /** Short card for projects whose case study is still being written. */
-  compact?: boolean;
+  lang: Lang;
+  delay?: number;
 }
-
-const { project, flip = false, compact = false } = Astro.props;
-const VISIBLE = 4;
-const first = project.highlights.slice(0, VISIBLE);
-const rest = project.highlights.slice(VISIBLE);
-const titleId = `project-${project.slug}`;
+const { project, lang, delay = 0 } = Astro.props;
+const { copy } = LANGS[lang];
+const text = copy.work.projects[project.slug];
+const titleId = `p-${project.slug}`;
+// A hint of each project's own brand colour behind its screenshots.
+const tint = { "olympic-gym": "#f2d400", "katakito-store": "#b8141f" }[project.slug];
 ---
 
-<article class:list={["project", { flip, compact }]} aria-labelledby={titleId} data-reveal>
-  <div class="visual"><ProjectPreview project={project} /></div>
+<div class="reveal" data-reveal="scale" style={`--delay:${delay}ms`}>
+<article class="card" aria-labelledby={titleId} style={`--tint:${tint}`}>
+  <div class="stage" aria-hidden="true">
+    <div class="browser">
+      <div class="chrome"><span class="dots"><i></i><i></i><i></i></span><span class="url" dir="ltr">{project.domain}</span></div>
+      <div class="screen">
+        <img src={project.shots.desktop.src} srcset={project.shots.desktop.srcset} sizes="(min-width: 900px) 560px, 92vw" alt="" width={project.shots.desktop.width} height={project.shots.desktop.height} loading="lazy" decoding="async" />
+      </div>
+    </div>
+    <div class="phone">
+      <img src={project.shots.mobile.src} alt="" width={project.shots.mobile.width} height={project.shots.mobile.height} loading="lazy" decoding="async" />
+    </div>
+  </div>
 
-  <div class="content">
-    <p class="meta mono"><span>{project.category}</span><span aria-hidden="true">/</span><span>{project.year}</span></p>
-    <h3 id={titleId}>{project.name}</h3>
-    <p class="summary">{project.summary}</p>
-
-    {project.note ? (
-      <p class="note mono">{project.note}</p>
-    ) : (
-      <>
-        <p class="role"><span class="mono">My role</span>{project.role}</p>
-
-        {first.length > 0 && (
-          <ul role="list" class="highlights">
-            {first.map((h) => <li>{h}</li>)}
-          </ul>
-        )}
-        {rest.length > 0 && (
-          <details class="more">
-            <summary>
-              <span class="closed">+ {rest.length} more features</span><span class="opened">Show fewer</span>
-            </summary>
-            <ul role="list" class="highlights">
-              {rest.map((h) => <li>{h}</li>)}
-            </ul>
-          </details>
-        )}
-
-        {project.technologies.length > 0 && (
-          <ul role="list" class="tech" aria-label={`Technologies used in ${project.name}`}>
-            {project.technologies.map((t) => <li class="chip">{t}</li>)}
-          </ul>
-        )}
-
-        {project.links.length > 0 && (
-          <div class="links">
-            {project.links.map((l) => (
-              <a class="btn btn-dark" href={l.href} target="_blank" rel="noopener noreferrer">
-                {l.label} <Icon name="arrow-up-right" class="nudge" />
-                <span class="visually-hidden">(opens {project.name} in a new tab)</span>
-              </a>
-            ))}
-          </div>
-        )}
-      </>
-    )}
+  <div class="info">
+    <p class="meta"><span>{text.category}</span><span class="dot" aria-hidden="true"></span><span class="mono">{project.year}</span></p>
+    <h3 id={titleId} lang="en" dir="auto">{project.name}</h3>
+    <p class="summary">{text.summary}</p>
+    <a class="go" href={project.url} target="_blank" rel="noopener noreferrer">
+      {copy.work.view}<span class="visually-hidden"> — {project.name} ({copy.a11y.newTab})</span>
+      <span class="arrow" aria-hidden="true"><Icon name="arrow-up-right" /></span>
+    </a>
   </div>
 </article>
+</div>
 
 <style>
-  .project { display: grid; gap: clamp(24px, 4vw, 40px); align-items: center; }
-  @media (min-width: 960px) {
-    .project { grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); gap: clamp(40px, 5vw, 72px); }
-    .project.flip .visual { order: 2; }
+  .reveal { display: grid; }
+  .card {
+    position: relative; display: grid; border-radius: calc(var(--radius) + 6px); border: 1px solid var(--line);
+    background: var(--surface); overflow: hidden; box-shadow: var(--shadow);
+    transition: transform 500ms var(--ease), box-shadow 500ms var(--ease), border-color 500ms var(--ease);
   }
-  .project:hover :global(.frame) { transform: translateY(-4px); }
+  .card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lift); border-color: var(--line-strong); }
+  .card:focus-within { outline: 2px solid var(--accent-text); outline-offset: 4px; }
 
-  .meta { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
-  .meta span:first-child { color: var(--accent-text); }
-  h3 { font-size: clamp(1.9rem, 4vw, 2.75rem); margin-top: 10px; }
-  .summary { margin-top: 14px; color: var(--muted); font-size: 1.05rem; max-width: 36rem; }
+  /* Screenshot stage */
+  .stage {
+    position: relative; aspect-ratio: 16 / 11; overflow: hidden; border-bottom: 1px solid var(--line);
+    background:
+      radial-gradient(70% 70% at 80% 10%, color-mix(in oklab, var(--tint) 16%, transparent), transparent 70%),
+      var(--surface-2);
+  }
+  .browser {
+    position: absolute; inset-inline-start: 7%; top: 11%; width: 80%;
+    border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: var(--surface);
+    box-shadow: 0 30px 50px -30px rgb(0 0 0 / 0.55);
+    transition: transform 700ms var(--ease);
+  }
+  .chrome { display: flex; align-items: center; gap: 10px; height: 26px; padding: 0 10px; border-bottom: 1px solid var(--line); background: var(--surface-2); }
+  .dots { display: flex; gap: 5px; }
+  .dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--line-strong); }
+  .url { font-family: var(--font-mono); font-size: 0.62rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .screen { aspect-ratio: 16 / 10; overflow: hidden; background: #0d0d0e; }
+  .screen img { width: 100%; height: 100%; object-fit: cover; object-position: top; transition: transform 900ms var(--ease); }
+  .phone {
+    position: absolute; inset-inline-end: 6%; bottom: -14%; width: 24%;
+    border-radius: 18px; padding: 4px; background: #0d0e0b; box-shadow: 0 24px 40px -18px rgb(0 0 0 / 0.6), 0 0 0 1px rgb(255 255 255 / 0.08) inset;
+    transition: transform 700ms var(--ease);
+  }
+  .phone img { width: 100%; border-radius: 14px; aspect-ratio: 9 / 17; object-fit: cover; object-position: top; }
 
-  .role { display: grid; gap: 4px; margin-top: 20px; padding: 14px 16px; border-radius: var(--radius-sm); background: var(--surface-2); font-size: 0.95rem; }
-  .role .mono { font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .card:hover .screen img { transform: scale(1.04); }
+  .card:hover .browser { transform: translateY(-4px); }
+  .card:hover .phone { transform: translateY(-12px); }
 
-  .highlights { display: grid; margin-top: 18px; border-top: 1px solid var(--line); }
-  .highlights li { position: relative; padding: 10px 0 10px 20px; border-bottom: 1px solid var(--line); font-size: 0.97rem; }
-  .highlights li::before { content: ""; position: absolute; inset-inline-start: 2px; top: 1.2em; width: 7px; height: 7px; border-radius: 2px; background: var(--accent); }
-  :global([dir="rtl"]) .highlights li { padding: 10px 20px 10px 0; }
+  /* Depth parallax while scrolling (native scroll-driven animation, no JS). */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .browser, .phone { animation: linear both; animation-timeline: view(); animation-range: entry 0% exit 100%; }
+      .browser { animation-name: drift-slow; }
+      .phone { animation-name: drift-fast; }
+      @keyframes drift-slow { from { translate: 0 14px; } to { translate: 0 -14px; } }
+      @keyframes drift-fast { from { translate: 0 34px; } to { translate: 0 -30px; } }
+    }
+  }
 
-  .more summary { display: inline-flex; align-items: center; min-height: 44px; margin-top: 6px; cursor: pointer; font-weight: 600; font-size: 0.92rem; list-style: none; border-bottom: 1px solid var(--line-strong); }
-  .more summary::-webkit-details-marker { display: none; }
-  .more .opened, .more[open] .closed { display: none; }
-  .more[open] .opened { display: inline; }
-  .more .highlights { margin-top: 10px; }
+  /* Text */
+  .info { display: grid; gap: 10px; padding: clamp(22px, 3vw, 30px); }
+  .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--muted); }
+  .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--line-strong); }
+  .mono { font-family: var(--font-mono); font-size: 0.8rem; }
+  h3 { font-size: var(--fs-h3); }
+  .summary { color: var(--muted); max-width: 34rem; }
 
-  .tech { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 22px; }
-  .links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
-
-  /* Compact variant (case study in preparation) */
-  .compact { padding: clamp(18px, 3vw, 24px); border: 1px dashed var(--line-strong); border-radius: var(--radius); }
-  @media (min-width: 960px) { .compact { grid-template-columns: minmax(0, 0.5fr) minmax(0, 1fr); } }
-  .compact h3 { font-size: clamp(1.5rem, 3vw, 2rem); }
-  .note { margin-top: 16px; font-size: 0.8rem; color: var(--accent-text); }
+  .go {
+    display: inline-flex; align-items: center; gap: 10px; width: fit-content; margin-top: 8px; min-height: 44px;
+    font-weight: 650; border-radius: 999px;
+  }
+  /* Stretch the link over the whole card. */
+  .go::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+  .go:focus-visible { outline: none; }
+  .arrow {
+    display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--accent); color: var(--on-accent);
+    overflow: hidden; transition: transform 400ms var(--ease);
+  }
+  .arrow :global(svg) { width: 16px; height: 16px; transition: transform 400ms var(--ease); }
+  :global([dir="rtl"]) .arrow :global(svg) { transform: scaleX(-1); }
+  .card:hover .arrow { transform: scale(1.08); }
+  .card:hover .arrow :global(svg) { transform: translate(2px, -2px); }
+  :global([dir="rtl"]) .card:hover .arrow :global(svg) { transform: scaleX(-1) translate(2px, -2px); }
 </style>

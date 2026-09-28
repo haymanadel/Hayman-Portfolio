@@ -1,22 +1,38 @@
 ---
 import { profile } from "@/data";
-import SectionHeading from "./SectionHeading.astro";
+import { LANGS, type Lang } from "@/i18n";
 import Icon from "./Icon.astro";
+
+interface Props {
+  lang: Lang;
+}
+const { copy } = LANGS[Astro.props.lang];
 ---
 
-<section class="section" id="about" aria-labelledby="about-title">
-  <div class="container">
-    <SectionHeading index="01" label="About" id="about-title" title={profile.about.lead} />
-    <div class="grid">
-      <div class="body" data-reveal>
-        {profile.about.body.map((p) => <p>{p}</p>)}
+<section class="section about" id="about" aria-labelledby="about-title">
+  <div class="container grid">
+    <div class="intro" data-reveal>
+      <p class="eyebrow">{copy.about.eyebrow}</p>
+      <h2 id="about-title" class="section-title">{copy.about.title}</h2>
+      <p class="body">{copy.about.body}</p>
+      {profile.cv && (
+        <a href={profile.cv.href} download={profile.cv.fileName} class="btn btn-ghost cv"><Icon name="download" /> {copy.about.cv}</a>
+      )}
+    </div>
+
+    <div class="side">
+      <div class="edu" data-reveal style="--delay:100ms">
+        <span class="icon" aria-hidden="true"><Icon name="cap" /></span>
+        <div>
+          <p class="label">{copy.about.educationLabel}</p>
+          <p class="degree">{copy.about.degree}</p>
+          <p class="inst">{copy.about.institution} <span class="abbr" lang="en">(AASTMT)</span></p>
+        </div>
       </div>
-      <div class="care" data-reveal style="--delay:120ms">
-        <p class="mono label">What I care about</p>
-        <ul role="list">
-          {profile.about.principles.map((item) => (
-            <li><Icon name="check" />{item}</li>
-          ))}
+      <div class="kit" data-reveal style="--delay:180ms">
+        <p class="label">{copy.about.toolkitLabel}</p>
+        <ul role="list" lang="en" dir="ltr">
+          {profile.toolkit.map((t) => <li class="chip">{t}</li>)}
         </ul>
       </div>
     </div>
@@ -24,13 +40,26 @@ import Icon from "./Icon.astro";
 </section>
 
 <style>
-  .grid { display: grid; gap: clamp(32px, 5vw, 48px); }
-  @media (min-width: 960px) { .grid { grid-template-columns: minmax(0, 0.42fr) minmax(0, 1fr); gap: 32px; } .body { grid-column: 2; } .care { grid-column: 2; } }
-  .body { display: grid; gap: 18px; max-width: 44rem; font-size: clamp(1.08rem, 1.5vw, 1.2rem); }
-  .body p:first-child { color: var(--text); }
-  .body p + p { color: var(--muted); }
-  .label { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
-  ul { display: grid; gap: 0; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); border-top: 1px solid var(--line); }
-  li { display: flex; align-items: center; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line); font-weight: 550; }
-  li :global(svg) { width: 18px; height: 18px; color: var(--accent-text); flex: none; }
+  .about { border-top: 1px solid var(--line); }
+  .grid { display: grid; gap: clamp(32px, 5vw, 64px); align-items: start; }
+  @media (min-width: 960px) { .grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); } }
+  .body { margin-top: var(--s-5); max-width: 34rem; font-size: var(--fs-lead); color: var(--muted); }
+  .cv { margin-top: var(--s-6); }
+
+  .side { display: grid; gap: 16px; }
+  .edu {
+    display: flex; gap: 16px; padding: clamp(20px, 3vw, 28px); border-radius: var(--radius); border: 1px solid var(--line); background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+  .icon { display: grid; place-items: center; width: 44px; height: 44px; flex: none; border-radius: 12px; background: var(--accent); color: var(--on-accent); }
+  .icon :global(svg) { width: 22px; height: 22px; }
+  .label { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  :global(:root[lang="ar"]) .label { font-family: var(--font-sans); font-size: 0.85rem; letter-spacing: 0; text-transform: none; }
+  .degree { margin-top: 4px; font-size: 1.3rem; font-weight: 650; letter-spacing: -0.02em; }
+  .inst { margin-top: 2px; color: var(--muted); font-size: 0.97rem; }
+  .abbr { white-space: nowrap; }
+
+  .kit { padding: clamp(20px, 3vw, 28px); border-radius: var(--radius); border: 1px dashed var(--line-strong); }
+  .kit ul { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  :global([dir="rtl"]) .kit ul { justify-content: flex-end; }
 </style>

@@ -1,10 +1,18 @@
 ---
 import Icon from "./Icon.astro";
+
+interface Props {
+  labelToDark: string;
+  labelToLight: string;
+}
+const { labelToDark, labelToLight } = Astro.props;
 ---
 
-<button class="theme-toggle" type="button" aria-label="Switch theme" data-theme-toggle>
-  <Icon name="sun" class="sun" />
-  <Icon name="moon" class="moon" />
+<button class="theme-toggle" type="button" aria-label={labelToDark} data-theme-toggle data-label-dark={labelToDark} data-label-light={labelToLight}>
+  <span class="icons" aria-hidden="true">
+    <Icon name="sun" class="sun" />
+    <Icon name="moon" class="moon" />
+  </span>
 </button>
 
 <script>
@@ -13,14 +21,14 @@ import Icon from "./Icon.astro";
 
 <style>
   .theme-toggle {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 44px; height: 44px; border-radius: 999px; color: var(--muted);
-    transition: color 160ms var(--ease), background-color 160ms var(--ease);
+    display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 999px; color: var(--muted); overflow: hidden;
+    transition: color 200ms var(--ease), background-color 200ms var(--ease);
   }
   .theme-toggle:hover { color: var(--text); background: var(--surface-2); }
-  .theme-toggle :global(svg) { width: 19px; height: 19px; }
-  /* Show the icon of the theme you would switch TO. */
-  .theme-toggle :global(.sun) { display: none; }
-  :global(:root[data-theme="dark"]) .theme-toggle :global(.sun) { display: block; }
-  :global(:root[data-theme="dark"]) .theme-toggle :global(.moon) { display: none; }
+  .icons { position: relative; width: 19px; height: 19px; }
+  .icons :global(svg) { position: absolute; inset: 0; width: 19px; height: 19px; transition: transform 500ms var(--ease), opacity 300ms var(--ease); }
+  /* Shows the theme you would switch TO; the icons rotate through each other. */
+  .icons :global(.sun) { opacity: 0; transform: rotate(-90deg) scale(0.5); }
+  :global(:root[data-theme="dark"]) .icons :global(.sun) { opacity: 1; transform: none; }
+  :global(:root[data-theme="dark"]) .icons :global(.moon) { opacity: 0; transform: rotate(90deg) scale(0.5); }
 </style>

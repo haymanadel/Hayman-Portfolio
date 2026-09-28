@@ -8,7 +8,7 @@ const { size = "md" } = Astro.props;
 ---
 
 <span class:list={["wordmark", size]}>
-  <span class="mark" aria-hidden="true"></span>{profile.brand}
+  <span class="mark" aria-hidden="true"></span><span class="word">{profile.brand}</span>
 </span>
 
 <style>

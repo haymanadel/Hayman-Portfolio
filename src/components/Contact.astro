@@ -1,86 +1,94 @@
 ---
-import { activeSocialLinks, primaryContact, whatsappContact } from "@/data";
-import Icon from "./Icon.astro";
+import { emailLink, whatsappLink, profileLinks } from "@/data";
+import { LANGS, type Lang } from "@/i18n";
 import { linkAttrs } from "@/lib/links";
+import Icon from "./Icon.astro";
 
-// The main button goes to a direct channel (email / WhatsApp) when one is set,
-// otherwise to the first configured profile.
-const main = primaryContact ?? activeSocialLinks[0];
-// WhatsApp as a second quick action when email is the main one.
-const secondary = main?.kind !== "whatsapp" ? whatsappContact : undefined;
+interface Props {
+  lang: Lang;
+}
+const { copy } = LANGS[Astro.props.lang];
 ---
 
 <section class="section contact" id="contact" aria-labelledby="contact-title">
   <div class="container">
-    <div class="panel" data-reveal>
-      <p class="eyebrow"><span class="idx">08</span> Contact</p>
-      <h2 id="contact-title">Have a project in mind?<br /><span>Let’s build something useful.</span></h2>
-      <p class="lead">
-        Tell me what your business needs — a website, an online store or a system to run your operations — and I’ll help you plan it and
-        build it properly.
-      </p>
+    <div class="panel" data-reveal="scale">
+      <div class="glow" aria-hidden="true"></div>
+      <p class="eyebrow">{copy.contact.eyebrow}</p>
+      <h2 id="contact-title">{copy.contact.title} <span>{copy.contact.titleMuted}</span></h2>
+      <p class="lead">{copy.contact.lead}</p>
 
-      {main && (
-        <div class="actions">
-          <a class="btn btn-primary big" href={main.href} {...linkAttrs(main.href)}>
-            {main.kind === "email" ? "Email me" : main.kind === "whatsapp" ? "Message me on WhatsApp" : `Find me on ${main.label}`}
-            <Icon name="arrow-up-right" class="nudge" />
+      <div class="actions">
+        {emailLink && (
+          <a class="btn btn-primary big" href={emailLink.href}>
+            <Icon name="email" /> {copy.contact.email} <Icon name="arrow-up-right" class="nudge-diag" />
           </a>
-          {secondary && (
-            <a class="btn big alt" href={secondary.href} {...linkAttrs(secondary.href)}>
-              <Icon name="whatsapp" /> WhatsApp
-            </a>
-          )}
-        </div>
-      )}
+        )}
+        {whatsappLink && (
+          <a class="btn big alt" href={whatsappLink.href} {...linkAttrs(whatsappLink.href)}>
+            <Icon name="whatsapp" /> {copy.contact.whatsapp}<span class="visually-hidden"> ({copy.a11y.newTab})</span>
+          </a>
+        )}
+      </div>
 
-      {activeSocialLinks.length > 0 && (
-        <ul role="list" class="channels" aria-label="Contact channels">
-          {activeSocialLinks.map((link) => (
-            <li>
-              <a href={link.href} {...linkAttrs(link.href, "noopener noreferrer me")}>
-                <Icon name={link.kind} />
-                <span class="text"><span class="mono kind">{link.label}</span><span class="value">{link.display}</span></span>
-                <Icon name="arrow-up-right" class="go" />
-              </a>
-            </li>
-          ))}
-        </ul>
-      )}
+      <div class="foot">
+        {emailLink && <a class="address" href={emailLink.href} dir="ltr">{emailLink.display}</a>}
+        {profileLinks.length > 0 && (
+          <div class="elsewhere">
+            <span class="label">{copy.contact.elsewhere}</span>
+            <ul role="list">
+              {profileLinks.map((l) => (
+                <li>
+                  <a href={l.href} {...linkAttrs(l.href, "noopener noreferrer me")} aria-label={`${l.label} — ${l.display} (${copy.a11y.newTab})`}>
+                    <Icon name={l.kind} />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
     </div>
   </div>
 </section>
 
 <style>
-  .contact { border-top: 0; }
+  .contact { padding-top: 0; }
   .panel {
-    position: relative; overflow: hidden; padding: clamp(28px, 6vw, 72px); border-radius: calc(var(--radius) + 6px);
+    position: relative; isolation: isolate; overflow: hidden; padding: clamp(28px, 6vw, 72px); border-radius: calc(var(--radius) + 10px);
     background: var(--invert-bg); color: var(--invert-text);
-    --muted-inv: color-mix(in oklab, var(--invert-text) 68%, transparent);
+    --muted-inv: color-mix(in oklab, var(--invert-text) 66%, transparent);
     --line-inv: color-mix(in oklab, var(--invert-text) 16%, transparent);
   }
-  .panel::after {
-    content: ""; position: absolute; width: 420px; height: 420px; inset-inline-end: -140px; top: -180px; border-radius: 50%;
-    background: radial-gradient(circle, color-mix(in oklab, var(--accent) 35%, transparent), transparent 70%); pointer-events: none;
+  .glow {
+    position: absolute; z-index: -1; width: 520px; aspect-ratio: 1; inset-inline-end: -160px; top: -220px; border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in oklab, var(--accent) 38%, transparent), transparent 68%);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .glow { animation: breathe 9s ease-in-out infinite alternate; }
+    @keyframes breathe { to { transform: translate(-40px, 30px) scale(1.15); } }
   }
   .eyebrow { color: var(--muted-inv); }
-  .idx { color: var(--invert-text); }
-  h2 { position: relative; margin-top: 20px; font-size: clamp(2.2rem, 6.5vw, 4.6rem); letter-spacing: -0.03em; max-width: 16ch; }
-  h2 span { color: var(--muted-inv); }
-  .lead { position: relative; margin-top: 20px; max-width: 38rem; color: var(--muted-inv); font-size: 1.08rem; }
-  .actions { position: relative; display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
-  .big { min-height: 56px; padding-inline: 28px; font-size: 1rem; }
-  .alt { border: 1px solid color-mix(in oklab, var(--invert-text) 30%, transparent); color: var(--invert-text); }
+  h2 { margin-top: var(--s-5); font-size: clamp(2.2rem, 6vw, 4.4rem); letter-spacing: -0.035em; max-width: 15ch; }
+  h2 span { display: block; color: var(--muted-inv); }
+  .lead { margin-top: var(--s-4); color: var(--muted-inv); font-size: var(--fs-lead); }
+
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: var(--s-6); }
+  .big { min-height: 56px; padding-inline: 26px; font-size: 1rem; }
+  .alt { border: 1px solid color-mix(in oklab, var(--invert-text) 28%, transparent); color: var(--invert-text); }
   .alt:hover { border-color: var(--invert-text); background: color-mix(in oklab, var(--invert-text) 8%, transparent); }
 
-  .channels { position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); margin-top: clamp(32px, 5vw, 52px); border-top: 1px solid var(--line-inv); }
-  .channels a { display: flex; align-items: center; gap: 14px; padding: 18px 4px; border-bottom: 1px solid var(--line-inv); transition: color 180ms var(--ease); }
-  .channels a:hover .value { color: var(--accent); }
-  .channels :global(svg) { width: 20px; height: 20px; flex: none; }
-  .text { display: grid; min-width: 0; flex: 1; }
-  .kind { font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted-inv); }
-  .value { font-weight: 600; overflow-wrap: anywhere; transition: color 180ms var(--ease); }
-  .channels :global(.go) { width: 16px; height: 16px; opacity: 0.6; }
-
+  .foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px; margin-top: clamp(32px, 5vw, 48px); padding-top: 22px; border-top: 1px solid var(--line-inv); }
+  .address { font-family: var(--font-mono); font-size: 0.92rem; color: var(--muted-inv); border-bottom: 1px solid transparent; transition: color 200ms var(--ease), border-color 200ms var(--ease); min-height: 44px; display: inline-flex; align-items: center; }
+  .address:hover { color: var(--invert-text); border-color: var(--invert-text); }
+  .elsewhere { display: flex; align-items: center; gap: 14px; }
+  .label { font-size: 0.85rem; color: var(--muted-inv); }
+  .elsewhere ul { display: flex; gap: 8px; }
+  .elsewhere a {
+    display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line-inv);
+    transition: background-color 250ms var(--ease), color 250ms var(--ease), transform 250ms var(--ease), border-color 250ms var(--ease);
+  }
+  .elsewhere a:hover { background: var(--accent); color: var(--on-accent); border-color: var(--accent); transform: translateY(-3px); }
+  .elsewhere :global(svg) { width: 19px; height: 19px; }
   .panel :global(:focus-visible) { outline-color: var(--accent); }
 </style>

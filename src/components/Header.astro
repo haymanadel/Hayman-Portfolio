@@ -1,43 +1,74 @@
 ---
 import { profile, sections } from "@/data";
+import { LANGS, otherLang, type Lang } from "@/i18n";
 import Icon from "./Icon.astro";
 import ThemeToggle from "./ThemeToggle.astro";
 import Wordmark from "./Wordmark.astro";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const { copy, path } = LANGS[lang];
+const alt = otherLang(lang);
+const href = (id: string) => (id === "home" ? `${path}#top` : `${path}#${id}`);
 ---
 
 <header class="site-header" data-header>
-  <div class="container bar">
-    <a href="/#top" class="brand" aria-label={`${profile.brand} — home`}><Wordmark /></a>
+  <div class="container">
+    <div class="bar">
+      <a href={href("home")} class="brand" aria-label={`${profile.fullName} — ${copy.nav.home}`}><Wordmark /></a>
 
-    <nav class="nav-desktop" aria-label="Primary">
+      <nav class="nav-desktop" aria-label={copy.a11y.primaryNav}>
+        <span class="indicator" aria-hidden="true" data-indicator></span>
+        <ul role="list" data-nav>
+          {sections.map((id) => <li><a href={href(id)} data-nav-link={id}>{copy.nav[id]}</a></li>)}
+        </ul>
+      </nav>
+
+      <div class="actions">
+        <div class="lang" role="group" aria-label={copy.a11y.language}>
+          {(["en", "ar"] as const).map((l) =>
+            l === lang ? (
+              <span class="lang-opt current" aria-current="true" lang={l}>{LANGS[l].short}<span class="visually-hidden"> — {LANGS[l].label}</span></span>
+            ) : (
+              <a class="lang-opt" href={LANGS[l].path} hreflang={l} lang={l} data-lang-switch={l} aria-label={LANGS[l].label}>{LANGS[l].short}</a>
+            ),
+          )}
+          <span class:list={["lang-thumb", { end: lang === "ar" }]} aria-hidden="true"></span>
+        </div>
+        <ThemeToggle labelToDark={copy.a11y.themeToDark} labelToLight={copy.a11y.themeToLight} />
+        <button
+          class="menu-btn"
+          type="button"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          data-menu-button
+          data-label-open={copy.a11y.menuOpen}
+          data-label-close={copy.a11y.menuClose}
+        >
+          <span class="burger" aria-hidden="true"><i></i><i></i></span>
+          <span class="visually-hidden" data-menu-label>{copy.a11y.menuOpen}</span>
+        </button>
+      </div>
+    </div>
+
+    <nav id="mobile-menu" class="nav-mobile" aria-label={copy.a11y.mobileNav} hidden data-menu>
       <ul role="list">
-        {sections.map((s) => <li><a href={`/#${s.id}`} data-nav-link>{s.label}</a></li>)}
+        {sections.map((id, i) => (
+          <li style={`--i:${i}`}>
+            <a href={href(id)} data-menu-link>
+              <span class="idx">0{i + 1}</span>{copy.nav[id]}
+            </a>
+          </li>
+        ))}
+        <li class="menu-foot" style={`--i:${sections.length}`}>
+          <a href={LANGS[alt].path} hreflang={alt} lang={alt} data-lang-switch={alt} class="menu-lang">{LANGS[alt].label}</a>
+          <a href={href("contact")} class="btn btn-primary" data-menu-link>{copy.hero.ctaContact} <Icon name="arrow-right" class="nudge" /></a>
+        </li>
       </ul>
     </nav>
-
-    <div class="actions">
-      <ThemeToggle />
-      <a href="/#contact" class="btn btn-dark talk">Let’s talk</a>
-      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-button>
-        <Icon name="menu" class="i-open" />
-        <Icon name="close" class="i-close" />
-        <span class="visually-hidden" data-menu-label>Open menu</span>
-      </button>
-    </div>
   </div>
-
-  <nav id="mobile-menu" class="nav-mobile" aria-label="Mobile" hidden data-menu>
-    <ul role="list" class="container">
-      {sections.map((s, i) => (
-        <li>
-          <a href={`/#${s.id}`} data-menu-link>
-            <span class="mono idx">{String(i + 1).padStart(2, "0")}</span>{s.label}
-          </a>
-        </li>
-      ))}
-      <li class="menu-cta"><a href="/#contact" class="btn btn-primary" data-menu-link>Let’s work together <Icon name="arrow-right" /></a></li>
-    </ul>
-  </nav>
 </header>
 
 <script>
@@ -45,52 +76,85 @@ import Wordmark from "./Wordmark.astro";
 </script>
 
 <style>
-  .site-header {
-    position: sticky; top: 0; z-index: 50;
-    background: color-mix(in oklab, var(--bg) 88%, transparent);
-    backdrop-filter: saturate(1.4) blur(10px);
-    -webkit-backdrop-filter: saturate(1.4) blur(10px);
-    border-bottom: 1px solid transparent;
-    transition: border-color 200ms var(--ease);
+  .site-header { position: sticky; top: 0; z-index: 50; padding-top: 12px; }
+  .bar {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    height: 60px; padding-inline: 10px 8px; border-radius: 999px;
+    border: 1px solid transparent; background: transparent;
+    transition: background-color 350ms var(--ease), border-color 350ms var(--ease), box-shadow 350ms var(--ease);
   }
-  .site-header.scrolled, .site-header.open { border-bottom-color: var(--line); }
-  .site-header.open { background: var(--bg); }
+  /* Floats as a pill once the page scrolls (or the menu opens). */
+  :global(.scrolled) .bar, :global(.open) .bar {
+    background: color-mix(in oklab, var(--bg) 82%, transparent);
+    border-color: var(--line);
+    box-shadow: 0 12px 30px -22px rgb(0 0 0 / 0.45);
+    backdrop-filter: saturate(1.4) blur(12px); -webkit-backdrop-filter: saturate(1.4) blur(12px);
+  }
+  .brand { display: inline-flex; align-items: center; min-height: 44px; padding-inline: 8px; border-radius: 999px; }
 
-  .bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: var(--header-h); }
-  .brand { display: inline-flex; align-items: center; min-height: 44px; }
-
-  .nav-desktop ul { display: flex; gap: 4px; }
+  .nav-desktop { position: relative; }
+  .nav-desktop ul { display: flex; gap: 2px; padding: 4px; }
   .nav-desktop a {
-    display: inline-flex; align-items: center; min-height: 40px; padding: 0 12px; border-radius: 999px;
-    font-size: 0.925rem; color: var(--muted); transition: color 160ms var(--ease), background-color 160ms var(--ease);
+    position: relative; z-index: 1; display: inline-flex; align-items: center; min-height: 38px; padding: 0 16px; border-radius: 999px;
+    font-size: 0.93rem; color: var(--muted); transition: color 250ms var(--ease);
   }
-  .nav-desktop a:hover { color: var(--text); }
-  .nav-desktop a[aria-current="true"] { color: var(--text); background: var(--surface-2); }
-
-  .actions { display: flex; align-items: center; gap: 8px; }
-  .talk { min-height: 40px; padding: 8px 18px; font-size: 0.9rem; }
-
-  .menu-btn { display: none; width: 44px; height: 44px; align-items: center; justify-content: center; border-radius: 999px; border: 1px solid var(--line-strong); }
-  .menu-btn :global(svg) { width: 20px; height: 20px; }
-  .menu-btn :global(.i-close) { display: none; }
-  .menu-btn[aria-expanded="true"] :global(.i-open) { display: none; }
-  .menu-btn[aria-expanded="true"] :global(.i-close) { display: block; }
-
-  .nav-mobile { border-top: 1px solid var(--line); background: var(--bg); max-height: calc(100svh - var(--header-h)); overflow-y: auto; }
-  .nav-mobile ul { padding-block: 8px 24px; }
-  .nav-mobile li:not(.menu-cta) a {
-    display: flex; align-items: baseline; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--line);
-    font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em;
+  .nav-desktop a:hover, .nav-desktop a[aria-current="true"] { color: var(--text); }
+  /* Sliding highlight behind the active item (positioned by header.ts). */
+  .indicator {
+    position: absolute; top: 4px; left: 0; height: 38px; width: 0; border-radius: 999px; background: var(--surface-2); opacity: 0;
+    transform: translateX(var(--x, 0px)); width: var(--w, 0px);
+    transition: transform 450ms var(--ease), width 450ms var(--ease), opacity 250ms var(--ease);
   }
-  .nav-mobile .idx { font-size: 0.75rem; color: var(--muted); font-weight: 400; }
-  .menu-cta { padding-top: 20px; }
-  .menu-cta .btn { width: 100%; }
+  .indicator.on { opacity: 1; }
 
-  @media (max-width: 919px) {
-    .nav-desktop, .talk { display: none; }
-    .menu-btn { display: inline-flex; }
+  .actions { display: flex; align-items: center; gap: 6px; }
+
+  .lang { position: relative; display: inline-grid; grid-template-columns: 1fr 1fr; padding: 3px; border-radius: 999px; border: 1px solid var(--line); direction: ltr; }
+  .lang-opt {
+    position: relative; z-index: 1; display: grid; place-items: center; min-width: 40px; height: 40px; border-radius: 999px;
+    font-size: 0.8rem; font-weight: 650; color: var(--muted); transition: color 250ms var(--ease);
   }
-  @media (min-width: 920px) {
+  .lang-opt[lang="ar"] { font-family: "Readex Pro Variable", var(--font-sans); font-size: 0.95rem; }
+  .lang-opt.current { color: var(--on-accent); }
+  a.lang-opt:hover { color: var(--text); }
+  .lang-thumb { position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); border-radius: 999px; background: var(--accent); transition: transform 420ms var(--ease); }
+  .lang-thumb.end { transform: translateX(100%); }
+  /* On hover the thumb leans toward the other language — a hint that it switches. */
+  .lang:hover .lang-thumb { transform: translateX(8%); }
+  .lang:hover .lang-thumb.end { transform: translateX(92%); }
+
+  .menu-btn { display: none; width: 44px; height: 44px; place-items: center; border-radius: 999px; border: 1px solid var(--line-strong); }
+  .burger { position: relative; width: 18px; height: 10px; }
+  .burger i { position: absolute; left: 0; width: 100%; height: 1.75px; border-radius: 2px; background: currentColor; transition: transform 380ms var(--ease), top 380ms var(--ease); }
+  .burger i:first-child { top: 0; }
+  .burger i:last-child { top: 8px; }
+  .menu-btn[aria-expanded="true"] .burger i:first-child { top: 4px; transform: rotate(45deg); }
+  .menu-btn[aria-expanded="true"] .burger i:last-child { top: 4px; transform: rotate(-45deg); }
+
+  .nav-mobile { margin-top: 10px; padding: 8px 20px 20px; border-radius: 24px; border: 1px solid var(--line); background: var(--bg); box-shadow: var(--shadow); }
+  .nav-mobile li:not(.menu-foot) a {
+    display: flex; align-items: baseline; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--line);
+    font-size: 1.6rem; font-weight: 650; letter-spacing: -0.02em;
+  }
+  .idx { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); font-weight: 400; }
+  .menu-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 18px; }
+  .menu-lang { display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; border-bottom: 1px solid var(--line-strong); }
+  @media (prefers-reduced-motion: no-preference) {
+    .nav-mobile:not([hidden]) li { animation: menu-in 520ms var(--ease) both; animation-delay: calc(var(--i) * 45ms); }
+    @keyframes menu-in { from { opacity: 0; transform: translateY(10px); } }
+  }
+
+  @media (max-width: 879px) {
+    .nav-desktop { display: none; }
+    .menu-btn { display: inline-grid; }
+  }
+  @media (min-width: 880px) {
     .nav-mobile { display: none; }
+  }
+  /* Smallest phones: brand mark only (the link keeps its accessible name). */
+  @media (max-width: 359px) {
+    .bar { padding-inline: 4px; gap: 6px; }
+    .brand :global(.word) { display: none; }
+    .actions { gap: 4px; }
   }
 </style>

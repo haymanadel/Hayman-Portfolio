@@ -1,57 +1,68 @@
 ---
 import "@/styles/global.css";
-import { site, profile, education, activeSocialLinks, primaryContact } from "@/data";
+import { site, profile, emailLink, activeSocialLinks } from "@/data";
+import { LANGS, type Lang } from "@/i18n";
 
 interface Props {
+  lang: Lang;
   title?: string;
   description?: string;
   /** Set on pages that must not be indexed (e.g. 404). */
   noindex?: boolean;
 }
 
-const { title = site.title, description = site.description, noindex = false } = Astro.props;
+const { lang, noindex = false } = Astro.props;
+const { copy, dir, path } = LANGS[lang];
+const title = Astro.props.title ?? copy.meta.title;
+const description = Astro.props.description ?? copy.meta.description;
 
 // Absolute URLs only exist when a real origin is resolved (see astro.config.mjs).
 const origin = Astro.site ? Astro.site.origin : "";
-const canonical = origin && !noindex ? new URL(Astro.url.pathname, origin).href : null;
-const ogImage = origin ? `${origin}${site.ogImage.src}` : site.ogImage.src;
+const abs = (p: string) => new URL(p, origin).href;
+const canonical = origin && !noindex ? abs(path) : null;
+const ogImagePath = site.ogImage[lang];
+const ogImage = origin ? abs(ogImagePath) : ogImagePath;
 
 const PROFILE_KINDS: string[] = ["github", "linkedin", "instagram", "facebook", "tiktok"];
-
 const person = {
   "@context": "https://schema.org",
   "@type": "Person",
   name: profile.fullName,
-  alternateName: profile.brand,
-  jobTitle: profile.title,
-  description: site.description,
-  ...(origin && { url: origin }),
-  ...(origin && profile.photo && { image: `${origin}${profile.photo.src}` }),
-  ...(primaryContact?.kind === "email" && { email: primaryContact.href.replace(/^mailto:/, "") }),
+  jobTitle: copy.hero.title,
+  description,
+  ...(origin && { url: abs("/"), image: abs(profile.photo.src) }),
+  ...(emailLink && { email: emailLink.href.replace(/^mailto:/, "") }),
   address: { "@type": "PostalAddress", addressCountry: "EG" },
-  alumniOf: { "@type": "CollegeOrUniversity", name: education.institution },
-  knowsAbout: ["Web development", "Full-stack development", "E-commerce", "Management systems", "React", "TypeScript", "Node.js", "PostgreSQL"],
-  // Profile pages only (not chat/call/email links).
+  alumniOf: { "@type": "CollegeOrUniversity", name: "Arab Academy for Science, Technology & Maritime Transport", alternateName: "AASTMT" },
+  knowsAbout: ["Web development", "Application development", "Full-stack development", "E-commerce", "Mechatronics engineering"],
   sameAs: activeSocialLinks.filter((l) => PROFILE_KINDS.includes(l.kind)).map((l) => l.href),
 };
 ---
 
 <!doctype html>
-<html lang={site.lang} dir={site.dir}>
+<html lang={lang} dir={dir}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="author" content={profile.fullName} />
-    {noindex ? <meta name="robots" content="noindex" /> : <meta name="robots" content="index, follow" />}
+    <meta name="robots" content={noindex ? "noindex" : "index, follow"} />
     {canonical && <link rel="canonical" href={canonical} />}
+    {origin && !noindex && (
+      <>
+        <link rel="alternate" hreflang="en" href={abs(LANGS.en.path)} />
+        <link rel="alternate" hreflang="ar" href={abs(LANGS.ar.path)} />
+        <link rel="alternate" hreflang="x-default" href={abs(LANGS.en.path)} />
+      </>
+    )}
 
-    <!-- Theme: applied before first paint so there is no flash of the wrong theme. -->
-    <script is:inline>
+    <!-- Before first paint: theme, and the visitor's remembered language (English home page only). -->
+    <script is:inline define:vars={{ lang, arPath: LANGS.ar.path, isHome: path === Astro.url.pathname }}>
       (() => {
-        let theme = null;
-        try { theme = localStorage.getItem("theme"); } catch {}
+        let theme = null, savedLang = null;
+        try { theme = localStorage.getItem("theme"); savedLang = localStorage.getItem("lang"); } catch {}
+        if (lang === "en" && isHome && savedLang === "ar" && !location.hash) { location.replace(arPath); return; }
         if (theme !== "light" && theme !== "dark") theme = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
         document.documentElement.dataset.theme = theme;
       })();
@@ -65,26 +76,26 @@ const person = {
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
 
-    <!-- Social previews (Instagram, WhatsApp, LinkedIn, X, Facebook…) -->
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content={profile.brand} />
+    <meta property="og:site_name" content={profile.fullName} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     {canonical && <meta property="og:url" content={canonical} />}
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content={String(site.ogImage.width)} />
     <meta property="og:image:height" content={String(site.ogImage.height)} />
-    <meta property="og:image:alt" content={site.ogImage.alt} />
-    <meta property="og:locale" content="en_US" />
+    <meta property="og:image:alt" content={copy.meta.ogImageAlt} />
+    <meta property="og:locale" content={copy.meta.locale} />
+    <meta property="og:locale:alternate" content={LANGS[lang === "en" ? "ar" : "en"].copy.meta.locale} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
 
-    <script type="application/ld+json" set:html={JSON.stringify(person)} />
+    {!noindex && <script type="application/ld+json" set:html={JSON.stringify(person)} />}
   </head>
   <body>
-    <a class="skip-link" href="#main">Skip to content</a>
+    <a class="skip-link" href="#main">{copy.a11y.skip}</a>
     <slot />
   </body>
 </html>

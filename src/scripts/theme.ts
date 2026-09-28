@@ -1,5 +1,5 @@
 // Theme toggle. The initial theme is applied before paint by an inline script
-// in BaseLayout; this only handles switching, persistence and system changes.
+// in BaseLayout; this handles switching, persistence and system changes.
 type Theme = "light" | "dark";
 
 const KEY = "theme";
@@ -15,19 +15,17 @@ function stored(): Theme | null {
   }
 }
 
-function current(): Theme {
-  return root.dataset.theme === "dark" ? "dark" : "light";
-}
+const current = (): Theme => (root.dataset.theme === "dark" ? "dark" : "light");
 
 function apply(theme: Theme, animate: boolean) {
   if (animate) {
     root.classList.add("theme-switching");
-    window.setTimeout(() => root.classList.remove("theme-switching"), 320);
+    window.setTimeout(() => root.classList.remove("theme-switching"), 340);
   }
   root.dataset.theme = theme;
-  const next = theme === "dark" ? "light" : "dark";
   document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]").forEach((btn) => {
-    btn.setAttribute("aria-label", `Switch to ${next} theme`);
+    const label = theme === "dark" ? btn.dataset.labelLight : btn.dataset.labelDark;
+    if (label) btn.setAttribute("aria-label", label);
   });
   // Keep the mobile browser chrome in sync with the chosen theme.
   const color = getComputedStyle(root).getPropertyValue("--bg").trim();
@@ -48,7 +46,6 @@ document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]").forEach((btn
   });
 });
 
-// Follow the OS theme until the visitor makes an explicit choice.
 systemDark.addEventListener("change", (e) => {
   if (!stored()) apply(e.matches ? "dark" : "light", true);
 });

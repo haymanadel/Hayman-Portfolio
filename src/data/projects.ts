@@ -1,88 +1,19 @@
 import type { Project } from "./types";
 
-// Real projects only. Links point at public, working pages — both source
-// repositories are private, so no code links are shown.
+// Screenshots are real captures of the live sites (public/images/projects/).
+const shots = (slug: string) => ({
+  desktop: { src: `/images/projects/${slug}-1440.webp`, srcset: `/images/projects/${slug}-800.webp 800w, /images/projects/${slug}-1440.webp 1440w`, width: 1440, height: 900 },
+  mobile: { src: `/images/projects/${slug}-mobile.webp`, width: 360, height: 779 },
+});
+
 export const projects: Project[] = [
+  { slug: "olympic-gym", name: "Olympic Gym", url: "https://olympic-gym.com", domain: "olympic-gym.com", year: "2026", shots: shots("olympic-gym") },
   {
     slug: "katakito-store",
     name: "Katakito Store",
-    category: "E-commerce platform",
+    url: "https://katakito-store.onrender.com",
+    domain: "katakito-store.onrender.com",
     year: "2026",
-    summary:
-      "An end-to-end e-commerce platform with a bilingual customer storefront and a complete administrative management system, built for a sneaker retailer in Egypt.",
-    role: "Designed and built end to end — storefront, admin, API, database and production deployment.",
-    highlights: [
-      "Storefront with product catalog, colour/size variants and per-variant inventory",
-      "Customer accounts, wishlist, cart and a multi-step checkout",
-      "Payment-verification workflow: customers upload a transfer receipt, admins review and approve it",
-      "Order management, shipping zones & delivery options, coupons and reviews",
-      "Admin dashboard with media, branding and store settings, plus staff roles",
-      "English and Arabic interface with full right-to-left layout",
-      "Responsive from 320px to desktop, deployed to production on Render",
-    ],
-    technologies: ["React", "TypeScript", "Vite", "Tailwind CSS", "TanStack Query", "Node.js", "Express", "PostgreSQL", "Drizzle ORM", "Zod", "Render"],
-    links: [{ label: "Live store", href: "https://katakito-store.onrender.com" }],
-    image: null,
-    previewLabel: "katakito-store.onrender.com",
-    featured: true,
-  },
-  {
-    slug: "olympic-gym",
-    name: "Olympic Gym",
-    category: "Website & management system",
-    year: "2026",
-    summary:
-      "A public gym website paired with a role-based management system for members, trainers, subscriptions and day-to-day operations.",
-    role: "Full-stack development — public website, member area, admin panels, API and deployment pipeline.",
-    highlights: [
-      "Public website: programs and classes, schedule, trainers, membership plans, blog and gallery",
-      "Member dashboard for membership status, bookings, attendance, payments and upgrades",
-      "Separate admin and super-admin panels with role-based access",
-      "Subscription plans, renewals and trainer-to-member assignments",
-      "Payment tracking with an online payment-gateway integration",
-      "QR-code attendance check-in and exportable PDF reports",
-      "Email notifications, contact inquiries and newsletter",
-      "Automated deploys: frontend on Vercel, API on Render, via GitHub Actions",
-    ],
-    technologies: ["React", "TypeScript", "Vite", "Tailwind CSS", "TanStack Query", "Node.js", "Express", "PostgreSQL", "Neon", "Drizzle ORM", "Zod", "JWT", "Vercel", "Render", "GitHub Actions"],
-    links: [{ label: "Live website", href: "https://olympic-gym.com" }],
-    image: null,
-    previewLabel: "olympic-gym.com",
-    featured: true,
-  },
-  {
-    slug: "smart-home",
-    name: "Smart Home Monitor",
-    category: "IoT / embedded prototype",
-    year: "2026",
-    summary:
-      "An Arduino-based home-monitoring prototype that reads temperature, humidity and motion and reacts in real time.",
-    role: "Hardware wiring and firmware, iterated across several prototype revisions.",
-    highlights: [
-      "Interrupt-driven motion detection (PIR) with light and audible alerts",
-      "Temperature and humidity sampling (DHT11) on non-blocking timers",
-      "Live status on an OLED (SSD1306) and a 16×2 I²C LCD",
-      "High-temperature alarm threshold and a system on/off switch",
-    ],
-    technologies: ["Arduino", "C++", "DHT11", "PIR sensor", "SSD1306 OLED", "I²C LCD"],
-    links: [],
-    image: null,
-    previewLabel: "Arduino · sensors · displays",
-    featured: true,
-  },
-  {
-    slug: "smart-expiry-fridge",
-    name: "Smart Expiry Fridge",
-    category: "Smart device concept",
-    year: "2026",
-    summary: "A smart-fridge project focused on keeping track of when stored food expires, to cut down on waste.",
-    role: "Concept and development.",
-    highlights: [],
-    technologies: [],
-    links: [],
-    image: null,
-    previewLabel: "Expiry tracking",
-    note: "Full case study coming soon.",
-    featured: true,
+    shots: shots("katakito-store"),
   },
 ];
