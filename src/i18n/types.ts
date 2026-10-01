@@ -11,7 +11,7 @@ export interface Copy {
     eyebrow: string;
     title: string;
     view: string;
-    projects: Record<"olympic-gym" | "katakito-store", { category: string; summary: string }>;
+    projects: Record<"olympic-gym" | "katakito-store" | "agently-saas", { category: string; summary: string }>;
   };
   about: {
     eyebrow: string;

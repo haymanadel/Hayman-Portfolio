@@ -16,4 +16,12 @@ export const projects: Project[] = [
     year: "2026",
     shots: shots("katakito-store"),
   },
+  {
+    slug: "agently-saas",
+    name: "Agently SaaS",
+    url: "https://agently-saas.onrender.com",
+    domain: "agently-saas.onrender.com",
+    year: "2026",
+    shots: shots("agently-saas"),
+  },
 ];

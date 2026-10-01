@@ -45,6 +45,10 @@ export const en: Copy = {
         category: "E-commerce platform",
         summary: "A modern footwear store with an Arabic/English storefront and a full admin dashboard.",
       },
+      "agently-saas": {
+        category: "AI SaaS platform",
+        summary: "An AI customer employee for online stores that answers from the real catalog, takes orders and hands off to a human — with an Arabic/English dashboard.",
+      },
     },
   },
   about: {

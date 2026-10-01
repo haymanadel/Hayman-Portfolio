@@ -30,7 +30,7 @@ export interface Profile {
 }
 
 export interface Project {
-  slug: "olympic-gym" | "katakito-store";
+  slug: "olympic-gym" | "katakito-store" | "agently-saas";
   name: string;
   url: string;
   /** Domain shown in the browser-frame preview. */
