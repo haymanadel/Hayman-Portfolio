@@ -20,7 +20,6 @@ export interface Copy {
     educationLabel: string;
     degree: string;
     institution: string;
-    toolkitLabel: string;
     cv: string;
   };
   contact: { eyebrow: string; title: string; titleMuted: string; lead: string; email: string; whatsapp: string; elsewhere: string };

@@ -29,12 +29,6 @@ const { copy } = LANGS[Astro.props.lang];
           <p class="inst">{copy.about.institution} <span class="abbr" lang="en">(AASTMT)</span></p>
         </div>
       </div>
-      <div class="kit" data-reveal style="--delay:180ms">
-        <p class="label">{copy.about.toolkitLabel}</p>
-        <ul role="list" lang="en" dir="ltr">
-          {profile.toolkit.map((t) => <li class="chip">{t}</li>)}
-        </ul>
-      </div>
     </div>
   </div>
 </section>
@@ -59,7 +53,4 @@ const { copy } = LANGS[Astro.props.lang];
   .inst { margin-top: 2px; color: var(--muted); font-size: 0.97rem; }
   .abbr { white-space: nowrap; }
 
-  .kit { padding: clamp(20px, 3vw, 28px); border-radius: var(--radius); border: 1px dashed var(--line-strong); }
-  .kit ul { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-  :global([dir="rtl"]) .kit ul { justify-content: flex-end; }
 </style>

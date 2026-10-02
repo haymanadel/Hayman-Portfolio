@@ -25,8 +25,6 @@ export interface Profile {
   photo: Image;
   /** null until a CV file is added to /public/cv. The Download CV button only appears once set. */
   cv: { href: string; fileName: string } | null;
-  /** Technologies used in the projects shown on the site. */
-  toolkit: string[];
 }
 
 export interface Project {

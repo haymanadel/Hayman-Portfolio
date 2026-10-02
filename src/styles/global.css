@@ -162,11 +162,6 @@ ul[role="list"], ol[role="list"] { list-style: none; padding: 0; }
 .btn-ghost { border: 1px solid var(--line-strong); }
 .btn-ghost:hover { border-color: var(--text); background: color-mix(in oklab, var(--surface) 70%, transparent); }
 
-.chip {
-  display: inline-flex; align-items: center; min-height: 32px; padding: 4px 13px; border: 1px solid var(--line);
-  border-radius: 999px; font-family: var(--font-mono); font-size: 0.76rem; color: var(--muted); white-space: nowrap;
-}
-
 /* ── Motion ────────────────────────────────────────────────────────────────
    Everything is visible by default. Scroll reveals only arm once JS adds
    .reveal-ready, and none of this runs for reduced-motion users. */

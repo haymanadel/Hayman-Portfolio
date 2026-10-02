@@ -59,7 +59,6 @@ export const ar: Copy = {
     educationLabel: "التعليم",
     degree: "هندسة الميكاترونكس",
     institution: "الأكاديمية العربية للعلوم والتكنولوجيا والنقل البحري",
-    toolkitLabel: "أدوات أعمل بها",
     cv: "تحميل السيرة الذاتية",
   },
   contact: {

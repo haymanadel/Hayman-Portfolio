@@ -58,7 +58,6 @@ export const en: Copy = {
     educationLabel: "Education",
     degree: "Mechatronics Engineering",
     institution: "Arab Academy for Science, Technology & Maritime Transport",
-    toolkitLabel: "Toolkit",
     cv: "Download CV",
   },
   contact: {
